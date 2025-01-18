@@ -33,16 +33,13 @@ public class IngredientEntity {
     @Version
     private Integer version;
 
-    // Relación con Purchase
-    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL)
-    private List<PurchaseEntity> purchases;
-
     public static IngredientEntity fromDomain(Ingredient ingredient) {
         return IngredientEntity
                 .builder()
                 .id(ingredient.getId().getValue())
                 .name(ingredient.getName().getValue())
                 .quantity(ingredient.getQuantity().getValue())
+                .reserved_quantity(ingredient.getReservedQuantity().getValue())
                 .build();
     }
 
