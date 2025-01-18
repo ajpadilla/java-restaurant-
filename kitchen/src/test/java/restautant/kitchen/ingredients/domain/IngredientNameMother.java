@@ -1,6 +1,7 @@
 package restautant.kitchen.ingredients.domain;
 
-import restaurant.order.shared.test.WordMother;
+import restautant.kitchen.ingredient.domain.IngredientName;
+import restautant.kitchen.shared.test.WordMother;
 
 public class IngredientNameMother {
 

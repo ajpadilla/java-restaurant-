@@ -1,6 +1,8 @@
 package restautant.kitchen.ingredients.domain;
 
-import restaurant.order.shared.test.UuidMother;
+
+import restautant.kitchen.ingredient.domain.IngredientId;
+import restautant.kitchen.shared.test.UuidMother;
 
 public class IngredientIdMother {
 

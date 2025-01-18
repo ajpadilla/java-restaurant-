@@ -1,5 +1,10 @@
 package restautant.kitchen.ingredients.domain;
 
+import restautant.kitchen.ingredient.domain.Ingredient;
+import restautant.kitchen.ingredient.domain.IngredientId;
+import restautant.kitchen.ingredient.domain.IngredientName;
+import restautant.kitchen.ingredient.domain.IngredientQuantity;
+
 public final class IngredientMother {
 
     public static Ingredient create(IngredientId id, IngredientName name, IngredientQuantity quantity) {

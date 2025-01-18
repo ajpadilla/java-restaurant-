@@ -1,9 +1,9 @@
 package restautant.kitchen.ingredients.domain;
 
-import restaurant.order.shared.test.IntegerMother;
+import restautant.kitchen.ingredient.domain.IngredientQuantity;
+import restautant.kitchen.shared.test.IntegerMother;
 
 public class IngredientQuantityMother {
-
     public static IngredientQuantity create (Integer value) {
         return new IngredientQuantity(value);
     }
@@ -11,5 +11,4 @@ public class IngredientQuantityMother {
     public static IngredientQuantity random() {
         return create(IntegerMother.random());
     }
-
 }
