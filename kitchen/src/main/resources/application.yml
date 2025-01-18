@@ -1,1 +1,66 @@
-spring.application.name=kitchen
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
+server:
+  port: 8090
+spring:
+  application:
+    name: kitchen
+  config:
+    import: optional:configserver:http://localhost:8888
+  datasource:
+    url: jdbc:postgresql://localhost:5432/students
+    username: ajpadilla
+    password: Heme19234099
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: basic
+  data:
+    redis:
+      host: localhost
+      port: 6377
+      password: ""
+      timeout: 2000ms
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      storeService:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10000ms
+        permitted-number-of-calls-in-half-open-state: 3
+        event-consumer-buffer-size: 10
+  retry:
+    instances:
+      storeService:
+        max-attempts: 3
+        wait-duration: 1000ms
+        enable-exponential-backoff: true
+
+
+app:
+  store-url: http://localhost:8070/api/v1/orders
