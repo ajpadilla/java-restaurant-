@@ -27,3 +27,8 @@ kafka:
 
 server:
   port: 8081
+
+paypal:
+  client-id: AW-8nDPUgijsSuffgM0EOyuXUZgXGeSSXRjA0ZPgdO11fFDZ7bXZ3KbRZej-IHdBtveItNg_MJRfF2E7
+  client-secret: EDreEji3GkwMVCYMaZIP9AQjMJEOCFz89QBIYm0Y_QqArNSuXGvigigRZmm8H0oZzvOy6XZG2y1bEwpT
+  mode: sandbox # Use #sandbox' for testing and 'live' for Production
