@@ -1,6 +1,7 @@
-package restaurant.order.order.domain;
+package restautant.kitchen.order.domain;
 
-import restaurant.order.shared.test.UuidMother;
+
+import restautant.kitchen.shared.test.UuidMother;
 
 public class OrderIdMother {
 

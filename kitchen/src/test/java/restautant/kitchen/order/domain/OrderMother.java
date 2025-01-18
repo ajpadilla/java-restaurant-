@@ -1,11 +1,12 @@
-package restaurant.order.order.domain;
+package restautant.kitchen.order.domain;
 
-import restaurant.order.ingredients.domain.Ingredient;
-import restaurant.order.ingredients.domain.IngredientMother;
-import restaurant.order.plate.domain.PlateIdMother;
-import restaurant.order.plate.domain.PlateMother;
-import restaurant.order.plate.domain.PlateNameMother;
-import restaurant.order.plates.domain.Plate;
+
+import restautant.kitchen.ingredient.domain.Ingredient;
+import restautant.kitchen.ingredients.domain.IngredientMother;
+import restautant.kitchen.plate.domain.Plate;
+import restautant.kitchen.plate.domain.PlateIdMother;
+import restautant.kitchen.plate.domain.PlateMother;
+import restautant.kitchen.plate.domain.PlateNameMother;
 
 import java.util.ArrayList;
 import java.util.List;
