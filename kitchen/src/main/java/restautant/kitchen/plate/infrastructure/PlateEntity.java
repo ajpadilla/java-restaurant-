@@ -3,11 +3,11 @@ package restautant.kitchen.plate.infrastructure;
 
 import jakarta.persistence.*;
 import lombok.*;
-import restaurant.order.ingredients.domain.Ingredient;
-import restaurant.order.ingredients.infrastructure.entity.IngredientEntity;
-import restaurant.order.plates.domain.Plate;
-import restaurant.order.plates.domain.PlateId;
-import restaurant.order.plates.domain.PlateName;
+import restautant.kitchen.ingredient.domain.Ingredient;
+import restautant.kitchen.ingredient.infrastructure.entity.IngredientEntity;
+import restautant.kitchen.plate.domain.Plate;
+import restautant.kitchen.plate.domain.PlateId;
+import restautant.kitchen.plate.domain.PlateName;
 
 import java.util.List;
 
