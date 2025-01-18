@@ -5,6 +5,8 @@ import restaurant.order.order.domain.OrderId;
 import restaurant.order.plates.domain.PlateId;
 import restaurant.order.shared.domain.bus.command.CommandHandler;
 
+import java.util.List;
+
 @Service
 public class CreateOrderCommandHandler implements CommandHandler<CreateOrderCommand> {
 
@@ -17,7 +19,10 @@ public class CreateOrderCommandHandler implements CommandHandler<CreateOrderComm
     @Override
     public void handle(CreateOrderCommand command) {
         OrderId id = new OrderId(command.getId());
-        PlateId plateId = new PlateId(command.getPlateId());
-        this.creator.create(id, plateId);
+        List<PlateId> plateIds = command.getPlateIds()
+                .stream()
+                .map(PlateId::new)
+                .toList();
+        this.creator.create(id, plateIds);
     }
 }
