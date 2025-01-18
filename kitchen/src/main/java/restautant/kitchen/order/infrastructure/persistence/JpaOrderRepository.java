@@ -12,11 +12,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import restaurant.order.order.domain.Order;
-import restaurant.order.order.domain.OrderId;
-import restaurant.order.order.domain.OrderRepository;
-import restaurant.order.order.infrastructure.entity.OrderEntity;
-import restaurant.order.plates.infrastructure.entity.PlateEntity;
+import restautant.kitchen.ingredient.infrastructure.entity.IngredientEntity;
+import restautant.kitchen.order.domain.Order;
+import restautant.kitchen.order.domain.OrderId;
+import restautant.kitchen.order.domain.OrderRepository;
+import restautant.kitchen.order.infrastructure.entity.OrderEntity;
+import restautant.kitchen.plate.infrastructure.PlateEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,27 +31,47 @@ public class JpaOrderRepository implements OrderRepository {
 
     @Override
     public void save(Order order) {
+        // Convertir el dominio Order a OrderEntity
         OrderEntity orderEntity = OrderEntity.fromDomain(order);
-        List<PlateEntity> plateEntities = orderEntity.getPlates();
 
+        // Manejar la persistencia de PlateEntity
+        List<PlateEntity> plateEntities = orderEntity.getPlates();
         plateEntities.forEach(plateEntity -> {
             if (plateEntity != null) {
-                // Verifica si el PlateEntity ya está persistido
+                // Verificar si el PlateEntity ya está persistido
                 PlateEntity managedPlateEntity = this.entityManager.find(PlateEntity.class, plateEntity.getId());
 
                 if (managedPlateEntity == null) {
                     // Persistir PlateEntity si no está ya guardado
                     this.entityManager.persist(plateEntity);
                 } else {
-                    // Actualiza la referencia en OrderEntity
+                    // Actualizar la referencia en OrderEntity
                     orderEntity.getPlates().set(orderEntity.getPlates().indexOf(plateEntity), managedPlateEntity);
                 }
+
+                // Manejar la persistencia de IngredientEntity dentro del PlateEntity
+                List<IngredientEntity> ingredientEntities = plateEntity.getIngredientEntityList();
+                ingredientEntities.forEach(ingredientEntity -> {
+                    if (ingredientEntity != null) {
+                        // Verificar si el IngredientEntity ya está persistido
+                        IngredientEntity managedIngredientEntity = this.entityManager.find(IngredientEntity.class, ingredientEntity.getId());
+
+                        if (managedIngredientEntity == null) {
+                            // Persistir IngredientEntity si no está ya guardado
+                            this.entityManager.persist(ingredientEntity);
+                        } else {
+                            // Actualizar la referencia en PlateEntity
+                            plateEntity.getIngredientEntityList().set(plateEntity.getIngredientEntityList().indexOf(ingredientEntity), managedIngredientEntity);
+                        }
+                    }
+                });
             }
         });
 
-        // Ahora persiste el OrderEntity
+        // Finalmente, persistir el OrderEntity
         this.entityManager.persist(orderEntity);
     }
+
 
     @Override
     public Optional<Order> search(OrderId id) {

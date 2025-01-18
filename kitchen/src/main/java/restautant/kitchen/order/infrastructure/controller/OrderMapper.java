@@ -1,4 +1,4 @@
-package restautant.kitchen.order.infrastructure;
+package restautant.kitchen.order.infrastructure.controller;
 
 import restautant.kitchen.ingredient.domain.Ingredient;
 import restautant.kitchen.order.domain.Order;

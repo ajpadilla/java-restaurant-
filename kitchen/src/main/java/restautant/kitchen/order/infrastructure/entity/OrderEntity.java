@@ -2,10 +2,11 @@ package restautant.kitchen.order.infrastructure.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import restaurant.order.order.domain.Order;
-import restaurant.order.order.domain.OrderId;
-import restaurant.order.plates.domain.Plate;
-import restaurant.order.plates.infrastructure.entity.PlateEntity;
+import restautant.kitchen.order.domain.Order;
+import restautant.kitchen.order.domain.OrderId;
+import restautant.kitchen.order.domain.OrderStatus;
+import restautant.kitchen.plate.domain.Plate;
+import restautant.kitchen.plate.infrastructure.PlateEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,12 +32,15 @@ public class OrderEntity {
     )
     private List<PlateEntity> plates;
 
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
     public static OrderEntity fromDomain(Order order) {
         List <PlateEntity> plateEntityFromDomain = order.getPlates()
                 .stream()
                 .map(PlateEntity::fromDomain)
                 .collect(Collectors.toList());
-        return new OrderEntity(order.getId().getValue(), plateEntityFromDomain);
+        return new OrderEntity(order.getId().getValue(), plateEntityFromDomain, order.getStatus());
     }
 
     public Order toDomain() {
@@ -45,7 +49,7 @@ public class OrderEntity {
                 .map(PlateEntity::toDomain)
                 .toList();
 
-        return new Order(new OrderId(this.id), plates);
+        return new Order(new OrderId(this.id), plates, status);
     }
 
 }

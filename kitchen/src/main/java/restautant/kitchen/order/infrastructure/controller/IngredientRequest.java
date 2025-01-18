@@ -1,4 +1,4 @@
-package restautant.kitchen.order.infrastructure;
+package restautant.kitchen.order.infrastructure.controller;
 
 
 public class IngredientRequest {
