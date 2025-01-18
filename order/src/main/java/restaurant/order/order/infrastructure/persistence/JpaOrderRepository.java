@@ -31,26 +31,25 @@ public class JpaOrderRepository implements OrderRepository {
     @Override
     public void save(Order order) {
         OrderEntity orderEntity = OrderEntity.fromDomain(order);
-        PlateEntity plateEntity = orderEntity.getPlate();
+        List<PlateEntity> plateEntities = orderEntity.getPlates();
 
-        if (plateEntity != null) {
-            // Verifica si el PlateEntity ya está persistido
-            PlateEntity managedPlateEntity = this.entityManager.find(PlateEntity.class, plateEntity.getId());
+        plateEntities.forEach(plateEntity -> {
+            if (plateEntity != null) {
+                // Verifica si el PlateEntity ya está persistido
+                PlateEntity managedPlateEntity = this.entityManager.find(PlateEntity.class, plateEntity.getId());
 
-            if (managedPlateEntity == null) {
-                // Persistir PlateEntity si no está ya guardado
-                this.entityManager.persist(plateEntity);
-            } else {
-                // Actualiza la referencia en OrderEntity
-                orderEntity.setPlate(managedPlateEntity);
+                if (managedPlateEntity == null) {
+                    // Persistir PlateEntity si no está ya guardado
+                    this.entityManager.persist(plateEntity);
+                } else {
+                    // Actualiza la referencia en OrderEntity
+                    orderEntity.getPlates().set(orderEntity.getPlates().indexOf(plateEntity), managedPlateEntity);
+                }
             }
-        }
+        });
 
         // Ahora persiste el OrderEntity
         this.entityManager.persist(orderEntity);
-
-        /*OrderEntity orderEntity = OrderEntity.fromDomain(order);
-        this.entityManager.persist(orderEntity);*/
     }
 
     @Override

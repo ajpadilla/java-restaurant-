@@ -42,7 +42,7 @@ public class OrdersController extends ApiController {
 
     @PostMapping("/create")
     public ResponseEntity<String> register(@RequestBody CreateOrderRequest request) throws CommandNotRegisteredError {
-        this.dispatch(new CreateOrderCommand(request.getId(), request.getPlateId()));
+        this.dispatch(new CreateOrderCommand(request.getId(), request.getPlateIds()));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

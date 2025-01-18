@@ -1,23 +1,24 @@
-package restautant.kitchen.order.infrastructure.paymentmethods.adapters;
+package restaurant.order.order.infrastructure.paymentmethods.adapters;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import restautant.kitchen.order.domain.PaymentOrderProcessor;
-import restautant.kitchen.order.infrastructure.paymentmethods.PayPalPayment;
-import restautant.kitchen.order.infrastructure.paymentmethods.PayoneerPayment;
+import restaurant.order.order.domain.PaymentOrderProcessor;
+import restaurant.order.order.infrastructure.paymentmethods.PayoneerPaymentService;
+import restaurant.order.order.infrastructure.paymentmethods.request.PaymentRequest;
+
 
 @Service
 public class PayonnerAdapter implements PaymentOrderProcessor {
 
     @Autowired
-    private final PayoneerPayment payoneerPayment;
+    private final PayoneerPaymentService payoneerPayment;
 
-    public PayonnerAdapter(PayoneerPayment payoneerPayment) {
+    public PayonnerAdapter(PayoneerPaymentService payoneerPayment) {
         this.payoneerPayment = payoneerPayment;
     }
 
     @Override
-    public void processPayment(double amount) {
+    public void processPayment(PaymentRequest request) {
         this.payoneerPayment.sendPayment(200);
     }
 }

@@ -10,16 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class PayPalPayment {
+public class PayPalPaymentService {
     private final APIContext apiContext;
 
-
-    public PayPalPayment(APIContext apiContext) {
+    public PayPalPaymentService(APIContext apiContext) {
         this.apiContext = apiContext;
     }
 
-    public Payment createPayment(Double total, String currency, String description)  throws PayPalRESTException{
+    protected Payment createPaymentInstance() {
+        return new Payment();
+    }
 
+    public Payment createPayment(Double total, String currency, String description)  throws PayPalRESTException{
         Amount amount = new Amount();
         amount.setCurrency(currency);
         amount.setTotal(String.format("%.2f", total));
@@ -34,12 +36,11 @@ public class PayPalPayment {
         Payer payer = new Payer();
         payer.setPaymentMethod("paypal");
 
-        Payment payment = new Payment();
+        Payment payment = createPaymentInstance(); // Cambiado a un método
         payment.setIntent("sale");
         payment.setPayer(payer);
         payment.setTransactions(transactions);
 
-        return payment.create(apiContext); // Llamada al servidor PayPal
-
+        return payment.create(this.apiContext); // Llamada al servidor PayPal
     }
 }

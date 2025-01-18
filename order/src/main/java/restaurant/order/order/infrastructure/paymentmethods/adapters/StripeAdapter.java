@@ -1,22 +1,22 @@
 package restaurant.order.order.infrastructure.paymentmethods.adapters;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import restautant.kitchen.order.domain.PaymentOrderProcessor;
-import restautant.kitchen.order.infrastructure.paymentmethods.StripePayment;
+import restaurant.order.order.domain.PaymentOrderProcessor;
+import restaurant.order.order.infrastructure.paymentmethods.StripePaymentService;
+import restaurant.order.order.infrastructure.paymentmethods.request.PaymentRequest;
 
 @Service
 public class StripeAdapter implements PaymentOrderProcessor {
 
 
-    private final StripePayment stripePayment;
+    private final StripePaymentService stripePayment;
 
-    public StripeAdapter(StripePayment stripePayment) {
+    public StripeAdapter(StripePaymentService stripePayment) {
         this.stripePayment = stripePayment;
     }
 
     @Override
-    public void processPayment(double amount) {
+    public void processPayment(PaymentRequest request) {
         this.stripePayment.payWithStripe(100);
     }
 }
