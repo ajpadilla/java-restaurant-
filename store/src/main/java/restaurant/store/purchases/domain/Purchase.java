@@ -11,18 +11,15 @@ public class Purchase extends AggregateRoot {
 
     private PurchaseQuantity quantity;
 
-    private Ingredient ingredient;
-
-    public Purchase(PurchaseId id, PurchaseDescription description, PurchaseQuantity quantity, Ingredient ingredient) {
+    public Purchase(PurchaseId id, PurchaseDescription description, PurchaseQuantity quantity) {
         this.id = id;
         this.description = description;
         this.quantity = quantity;
-        this.ingredient = ingredient;
     }
 
-    public static Purchase create(PurchaseId id, PurchaseDescription description, PurchaseQuantity quantity, Ingredient ingredient) {
-        Purchase purchase = new Purchase(id, description, quantity, ingredient);
-        purchase.record(new PurchaseCreatedDomainEvent(id.getValue(), description.getValue(), quantity.getValue(), ingredient.getId().getValue()));
+    public static Purchase create(PurchaseId id, PurchaseDescription description, PurchaseQuantity quantity) {
+        Purchase purchase = new Purchase(id, description, quantity);
+        purchase.record(new PurchaseCreatedDomainEvent(id.getValue(), description.getValue(), quantity.getValue()));
         return purchase;
     }
 
@@ -38,7 +35,4 @@ public class Purchase extends AggregateRoot {
         return quantity;
     }
 
-    public Ingredient getIngredient() {
-        return ingredient;
-    }
 }
