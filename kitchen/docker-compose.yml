@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  kitchen_spring_boot_redis:
+    container_name: kitchen_spring_boot_redis
+    image: redis:latest
+    ports:
+      - "6377:6379"  # Redirige el puerto 6377 del host al puerto 6379 del contenedor
+    volumes:
+      - ./docker/data/redis:/data  # Volumen persistente para los datos de Redis
+    networks:
+      - restaurant_shared_network  # Red compartida entre otros servicios
+
+networks:
+  restaurant_shared_network:
+    driver: bridge  # Usa la red bridge por defecto
