@@ -3,14 +3,15 @@ package restaurant.order.order.domain;
 import restaurant.order.plates.domain.Plate;
 import restaurant.order.shared.domain.AggregateRoot;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Order extends AggregateRoot {
     OrderId id;
 
-    Plate plate;
+    List<Plate> plate;
 
-    public Order(OrderId id, Plate plate) {
+    public Order(OrderId id, List<Plate> plate) {
         this.id = id;
         this.plate = plate;
     }
@@ -24,11 +25,11 @@ public class Order extends AggregateRoot {
         return id;
     }
 
-    public Plate getPlate() {
+    public List<Plate> getPlates() {
         return plate;
     }
 
-    public static Order create(OrderId id, Plate plate) {
+    public static Order create(OrderId id, List<Plate> plate) {
         Order order = new Order(id, plate);
         order.record(new OrderCreatedDomainEvent(id.getValue()));
         return order;

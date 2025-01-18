@@ -1,5 +1,7 @@
 package restaurant.order.order.domain;
 
+import restaurant.order.order.infrastructure.paymentmethods.request.PaymentRequest;
+
 public interface PaymentOrderProcessor {
-    void processPayment(double amount);
+    void processPayment(PaymentRequest request);
 }

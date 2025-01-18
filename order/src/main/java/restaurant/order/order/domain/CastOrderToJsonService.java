@@ -21,23 +21,34 @@ public class CastOrderToJsonService {
     public HashMap<String, Serializable> createMap() {
         HashMap<String, Serializable> orderMap = new HashMap<>();
 
-        Plate plate = order.getPlate();
-
+        // Agregar información general de la orden
         orderMap.put("order_id", order.getId().getValue());
-        orderMap.put("plate_id", plate.getId().getValue());
-        orderMap.put("plate_name", plate.getName().getValue());
 
-        List<HashMap<String, Serializable>> ingredientsList = plate.getIngredients().stream()
-                .map(ingredient -> {
-                    HashMap<String, Serializable> ingredientMap = new HashMap<>();
-                    ingredientMap.put("id", ingredient.getId().getValue());
-                    ingredientMap.put("name", ingredient.getName().getValue());
-                    ingredientMap.put("quantity", ingredient.getQuantity().getValue());
-                    return ingredientMap;
+        // Transformar cada Plate en un mapa y recolectar en una lista
+        List<HashMap<String, Serializable>> platesList = order.getPlates().stream()
+                .map(plate -> {
+                    HashMap<String, Serializable> plateMap = new HashMap<>();
+                    plateMap.put("plate_id", plate.getId().getValue());
+                    plateMap.put("plate_name", plate.getName().getValue());
+
+                    // Transformar los ingredientes del Plate en mapas
+                    List<HashMap<String, Serializable>> ingredientsList = plate.getIngredients().stream()
+                            .map(ingredient -> {
+                                HashMap<String, Serializable> ingredientMap = new HashMap<>();
+                                ingredientMap.put("id", ingredient.getId().getValue());
+                                ingredientMap.put("name", ingredient.getName().getValue());
+                                ingredientMap.put("quantity", ingredient.getQuantity().getValue());
+                                return ingredientMap;
+                            })
+                            .collect(Collectors.toList());
+
+                    plateMap.put("ingredients", (Serializable) ingredientsList);
+
+                    return plateMap;
                 })
                 .collect(Collectors.toList());
 
-        orderMap.put("ingredients", (Serializable) ingredientsList);
+        orderMap.put("plates", (Serializable) platesList);
 
         return orderMap;
     }
