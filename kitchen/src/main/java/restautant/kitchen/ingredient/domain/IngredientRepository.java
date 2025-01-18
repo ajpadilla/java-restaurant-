@@ -8,6 +8,8 @@ public interface IngredientRepository {
 
     void save(Ingredient ingredient);
 
+    Optional<Ingredient> search(IngredientId id);
+
     Page<Ingredient> searchAll(int page, int size);
 
 }

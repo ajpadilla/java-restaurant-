@@ -14,7 +14,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import restaurant.store.ingredients.infrastructure.entity.IngredientEntity;
+import restautant.kitchen.ingredient.domain.Ingredient;
+import restautant.kitchen.ingredient.domain.IngredientId;
+import restautant.kitchen.ingredient.domain.IngredientQuantity;
+import restautant.kitchen.ingredient.domain.IngredientRepository;
+import restautant.kitchen.ingredient.infrastructure.entity.IngredientEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +27,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 public class JpaIngredientRepository implements IngredientRepository {
+
     private final EntityManager entityManager;
     @Override
     public void save(Ingredient ingredient) {
@@ -31,6 +36,13 @@ public class JpaIngredientRepository implements IngredientRepository {
     }
 
     @Override
+    public Optional<Ingredient> search(IngredientId id) {
+        IngredientEntity ingredientEntity = this.entityManager.find(IngredientEntity.class, id.getValue());
+        return Optional.ofNullable(ingredientEntity.toDomain());
+    }
+
+
+   /* @Override
     public Optional<Ingredient> findByIdWithLock(IngredientId ingredientId) {
         // Usamos un bloqueo PESSIMISTIC_WRITE para evitar modificaciones concurrentes
         IngredientEntity ingredientEntity = this.entityManager
@@ -44,11 +56,6 @@ public class JpaIngredientRepository implements IngredientRepository {
         }
     }
 
-    @Override
-    public Optional<Ingredient> search(IngredientId id) {
-        IngredientEntity ingredientEntity = this.entityManager.find(IngredientEntity.class, id.getValue());
-        return Optional.ofNullable(ingredientEntity.toDomain());
-    }
 
     @Override
     public Optional<Ingredient> searchByName(String name) {
@@ -115,7 +122,7 @@ public class JpaIngredientRepository implements IngredientRepository {
         } else {
             throw new EntityNotFoundException("Ingredient with name " + name + " not found");
         }
-    }
+    }*/
 
     @Override
     public Page<Ingredient> searchAll(int page, int size) {

@@ -4,10 +4,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.*;
-import restaurant.order.ingredients.domain.Ingredient;
-import restaurant.order.ingredients.domain.IngredientId;
-import restaurant.order.ingredients.domain.IngredientName;
-import restaurant.order.ingredients.domain.IngredientQuantity;
+import restautant.kitchen.ingredient.domain.Ingredient;
+import restautant.kitchen.ingredient.domain.IngredientId;
+import restautant.kitchen.ingredient.domain.IngredientName;
+import restautant.kitchen.ingredient.domain.IngredientQuantity;
+
 
 @Data
 @Builder
