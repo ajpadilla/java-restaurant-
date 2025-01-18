@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,13 +24,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 
 @Configuration
+@EnableWebFluxSecurity  // Asegura que Spring Security Reactive está habilitado
 public class WebFluxSecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/public/**").permitAll()  // Permite acceso sin autenticación
+                        .pathMatchers("/api/v1/orders/healthcheck").permitAll()  // Permite acceso sin autenticación
                         .anyExchange().authenticated()  // Requiere autenticación para cualquier otra solicitud
                 )
                 .formLogin(withDefaults());  // Configuración de autenticación con formulario
