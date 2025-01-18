@@ -105,8 +105,14 @@ public class JpaIngredientRepository implements IngredientRepository {
             ingredientEntity.setQuantity(quantity.getValue());
             //ingredientEntity.setReserved_quantity(ingredient.getReservedQuantity().getValue());
 
-            // Sincronizamos los cambios con la base de datos
-            this.entityManager.merge(ingredientEntity);
+            // Evitamos que la entidad se duplique en el contexto de la sesión
+            if (this.entityManager.contains(ingredientEntity)) {
+                // Si la entidad ya está gestionada por la sesión, no es necesario usar merge
+                this.entityManager.flush(); // Sincroniza los cambios con la base de datos
+            } else {
+                // Si no está gestionada, la gestionamos con merge
+                this.entityManager.merge(ingredientEntity);
+            }
         } else {
             throw new EntityNotFoundException("Ingredient with name " + name + " not found");
         }
