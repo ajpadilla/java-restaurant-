@@ -1,0 +1,59 @@
+eureka:
+  client:
+    register-with-eureka: false
+
+server:
+  port: 8222  # Configuración del puerto para el Gateway
+
+spring:
+  application:
+    name: gateway  # Nombre de la aplicación para el Gateway
+    config:
+      import: optional:configserver:http://localhost:8888
+  datasource:
+    url: jdbc:postgresql://localhost:5432/jwt_token_sb  # Configuración de la base de datos PostgreSQL
+    username: ajpadilla
+    password: Heme19234099
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  # Configuración de Hibernate
+    show-sql: true  # Mostrar SQL generado por Hibernate
+    properties:
+      hibernate:
+        format_sql: true  # Formatear el SQL
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+ # security:
+  #  jwt:
+   #   secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970  # Clave secreta JWT
+    #  expiration: 604800000  # Expiración del token JWT (7 días)
+     # refresh-token:
+      #  expiration: 604800000  # Expiración del refresh token (7 días)
+
+  cloud:
+    config:
+      import-check:
+        enabled: false  # Deshabilitar la importación de configuración
+
+    gateway:
+      discovery:
+        locator:
+          enabled: true  # Habilitar descubrimiento de servicios de Eureka
+      routes:
+        - id: store
+          uri: http://localhost:8070  # URI del servicio de estudiantes
+          predicates:
+            - Path=/api/v1/orders/**
+
+
+logging:
+  level:
+    org.springframework.security.web: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
