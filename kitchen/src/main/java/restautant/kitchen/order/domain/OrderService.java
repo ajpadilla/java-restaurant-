@@ -25,36 +25,44 @@ public class OrderService {
         this.bus = bus;
     }
 
-    public Order create(HashMap orderOjbect) {
+    public Order create(HashMap orderObject) {
 
-        // Convertir la lista de ingredientes a una lista de objetos Ingredient
-        List<HashMap<String, Object>> ingredientMaps = (List<HashMap<String, Object>>) orderOjbect.get("ingredients");
-        List<Ingredient> ingredients = new ArrayList<>();
+        // Convertir la lista de platos en objetos Plate
+        List<HashMap<String, Object>> platesMap = (List<HashMap<String, Object>>) orderObject.get("plates");
+        List<Plate> plates = new ArrayList<>();
 
-        for (HashMap<String, Object> ingredientMap : ingredientMaps) {
-            Ingredient ingredient = new Ingredient(
-                    new IngredientId(ingredientMap.get("id").toString()),
-                    new IngredientName(ingredientMap.get("name").toString()),
-                    new IngredientQuantity((Integer) ingredientMap.get("quantity"))
+        for (HashMap<String, Object> plateMap : platesMap) {
+            // Convertir los ingredientes del plato
+            List<HashMap<String, Object>> ingredientsMap = (List<HashMap<String, Object>>) plateMap.get("ingredients");
+            List<Ingredient> ingredients = new ArrayList<>();
+
+            for (HashMap<String, Object> ingredientMap : ingredientsMap) {
+                Ingredient ingredient = new Ingredient(
+                        new IngredientId(ingredientMap.get("id").toString()),
+                        new IngredientName(ingredientMap.get("name").toString()),
+                        new IngredientQuantity(Integer.parseInt(ingredientMap.get("quantity").toString()))
+                );
+                ingredients.add(ingredient);
+            }
+
+            // Crear el objeto Plate
+            Plate plate = new Plate(
+                    new PlateId(plateMap.get("plate_id").toString()),
+                    new PlateName(plateMap.get("plate_name").toString()),
+                    ingredients
             );
-            ingredients.add(ingredient);
+            plates.add(plate);
         }
 
-        Plate plate = new Plate(
-                new PlateId(orderOjbect.get("plate_id").toString()),
-                new PlateName(orderOjbect.get("plate_name").toString()),
-                ingredients
-        );
-
+        // Crear el objeto Order
         Order order = Order.create(
-                new OrderId(orderOjbect.get("order_id").toString()),
-                plate
+                new OrderId(orderObject.get("order_id").toString()),
+                plates
         );
 
-     //   this.bus.publish(order.pullDomainEvents());
+        // Publicar eventos de dominio si es necesario
+        // this.bus.publish(order.pullDomainEvents());
 
         return order;
     }
-
-
 }

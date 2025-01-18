@@ -1,4 +1,11 @@
 package restautant.kitchen.order.domain;
 
-public class RedisPort {
+import java.io.Serializable;
+
+public interface RedisPort {
+    void saveSaga(String orderId, Serializable saga);
+
+    Serializable getSaga(String orderId);
+
+    void deleteSaga(String orderId);
 }
