@@ -12,14 +12,11 @@ public class PurchaseCreatedDomainEvent extends DomainEvent<PurchaseCreatedDomai
     private final String description;
     private final Integer quantity;
 
-    private final String ingredientId;
 
-
-    public PurchaseCreatedDomainEvent(String aggregateId, String description, Integer quantity, String ingredientId) {
+    public PurchaseCreatedDomainEvent(String aggregateId, String description, Integer quantity) {
         super(aggregateId);
         this.description = description;
         this.quantity = quantity;
-        this.ingredientId = ingredientId;
     }
 
     public PurchaseCreatedDomainEvent(
@@ -33,7 +30,6 @@ public class PurchaseCreatedDomainEvent extends DomainEvent<PurchaseCreatedDomai
         super(aggregateId, eventId, occurredOn);
         this.description = description;
         this.quantity = quantity;
-        this.ingredientId = ingredientId;
     }
 
 
@@ -47,7 +43,6 @@ public class PurchaseCreatedDomainEvent extends DomainEvent<PurchaseCreatedDomai
         return new HashMap<String, Serializable>() {{
             put("description", description);
             put("quantity", quantity);
-            put("ingredient_id", ingredientId);
         }};
     }
 
