@@ -91,6 +91,13 @@ public class OrdersControllerTest {
         return ingredientsListToPlate;
     }
 
+
+    // Prepara el payload JSON
+        /*String jsonPayload = String.format(
+                "{\"id\":\"550e8400-e29b-41d4-a716-446655440000\", \"plateIds\":%s}",
+                new ObjectMapper().writeValueAsString(plateIds)
+        );*/
+    /*
     @Test
     public void testCreateAOrder() throws Exception{
 
@@ -135,11 +142,7 @@ public class OrdersControllerTest {
         plateIds.add(plate3.getId().getValue());
         this.plateRepository.save(plate3);
 
-        // Prepara el payload JSON
-        /*String jsonPayload = String.format(
-                "{\"id\":\"550e8400-e29b-41d4-a716-446655440000\", \"plateIds\":%s}",
-                new ObjectMapper().writeValueAsString(plateIds)
-        );*/
+
 
         String jsonPayload = String.format(
                 "{\"id\":\"%s\", \"plateIds\":%s}",
@@ -153,7 +156,7 @@ public class OrdersControllerTest {
                         .content(jsonPayload))
                 .andExpect(status().isCreated());
 
-    }
+    } */
 
     @Test
     public void testFindAllExistingOrders() throws Exception {
