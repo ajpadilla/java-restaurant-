@@ -35,7 +35,7 @@ public class OrdersController extends ApiController {
 
     @GetMapping("/health")
     public ResponseEntity<String> health(){
-        return ResponseEntity.ok("Order Service is running and listening");
+        return ResponseEntity.ok("Order Service is running and listening oh yea");
     }
 
     @GetMapping("/index")
