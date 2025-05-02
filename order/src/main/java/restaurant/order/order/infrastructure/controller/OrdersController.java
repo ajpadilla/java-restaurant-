@@ -33,6 +33,11 @@ public class OrdersController extends ApiController {
         this.queryBus = queryBus;
     }
 
+    @GetMapping("/health")
+    public ResponseEntity<String> health(){
+        return ResponseEntity.ok("Order Service is running");
+    }
+
     @GetMapping("/index")
     public ResponseEntity<Page<Order>> index(@RequestParam(defaultValue = "0") int page,
                                              @RequestParam(defaultValue = "10") int size) throws QueryHandlerExecutionError {
