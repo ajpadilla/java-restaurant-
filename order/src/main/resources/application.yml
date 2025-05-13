@@ -26,6 +26,7 @@ kafka:
     value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 server:
+  address: 192.168.100.101
   port: 8081
 
 paypal:
