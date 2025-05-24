@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define your desired packages
-packages=("nload" "iftop" "unzip")
+packages=("nload" "iftop" "unzip", "python3" "python3-pip" "python3-venv")
 
 # Install available packages from APT
 for pkg in "${packages[@]}"; do
@@ -38,4 +38,19 @@ if ! command -v wrk &>/dev/null; then
   echo "✅ 'wrk' installed successfully."
 else
   echo "✅ 'wrk' is already installed."
+fi
+
+
+if [ ! `command -v python3 &>/dev/null` ]; then
+  echo "📦 Python3 not found. Installing..."
+  sudo apt-get install -y python3 python3-pip
+else
+  echo "✅ Python3 is already installed."
+fi
+
+if [ ! python3 -m venv --help &>/dev/null]; then
+  echo "📦 python3-venv not found. Installing..."
+  sudo apt-get install -y python3-venv
+else
+    echo "✅ python3-venv is already available."
 fi
