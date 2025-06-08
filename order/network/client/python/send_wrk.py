@@ -21,9 +21,9 @@ def run_wrk():
             if "Requests/sec" in line or "Latency" in line:
                 print("➤", line)
 
-except subprocess.CalledProcessError as e:
-print("❌ Error running wrk:")
-print(e.stderr
+    except subprocess.CalledProcessError as e:
+        print("❌ Error running wrk:")
+        print(e.stderr)
 
 if __name__ == "__main__":
     run_wrk()
