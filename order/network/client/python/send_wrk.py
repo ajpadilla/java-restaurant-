@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import subprocess
 from config import TARGET_URL, THREADS, CONNECTIONS, DURATION, NETNS
 
