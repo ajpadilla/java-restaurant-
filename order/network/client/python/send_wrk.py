@@ -11,13 +11,19 @@ def run_wrk():
         TARGET_URL
     ]
 
-    with open("../logs/wrk_output.txt", "w") as f:
-        process = subprocess.Popen(cmd, stdout=f, stderr=subprocess.PIPE)
-        _, stderr = process.communicate()
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        print("WRK Output:")
+        print(result.stdout)
 
-    if stderr:
-        print("WRK encountered an error:")
-        print(stderr.decode())
+        # Optional: Parse RPS or latency from stdout
+        for line in result.stdout.splitlines():
+            if "Requests/sec" in line or "Latency" in line:
+                print("➤", line)
+
+except subprocess.CalledProcessError as e:
+print("❌ Error running wrk:")
+print(e.stderr
 
 if __name__ == "__main__":
     run_wrk()
