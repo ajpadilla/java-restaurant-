@@ -13,4 +13,5 @@ echo "[*] Socket Buffers (Recv-Q/Send-Q) from 192.168.100.102:"
 ss -i src 192.168.100.102 | grep -v "Recv-Q: 0" || echo "No active buffered connections from this source"
 
 echo "[*] Raw Socket States (searching for port 8081 in hex):"
-cat /proc/net/tcp | grep ':1F91'
+cat /proc/net/tcp6 | grep -i ':1f91'
+
