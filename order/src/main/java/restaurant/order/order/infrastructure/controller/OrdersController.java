@@ -35,13 +35,16 @@ public class OrdersController extends ApiController {
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {
+        String threadName = Thread.currentThread().getName();
+        System.out.println("Handling health check on thread: " + threadName);
         try {
-            Thread.sleep(5000); // Sleep for 5 seconds
+            Thread.sleep(5000); // Simulate load
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        return ResponseEntity.ok("Order Service is running and listening oh yea");
+        return ResponseEntity.ok("Thread: " + threadName + " handled the request");
     }
+
 
 
     @GetMapping("/index")
