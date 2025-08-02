@@ -34,9 +34,15 @@ public class OrdersController extends ApiController {
     }
 
     @GetMapping("/health")
-    public ResponseEntity<String> health(){
+    public ResponseEntity<String> health() {
+        try {
+            Thread.sleep(5000); // Sleep for 5 seconds
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         return ResponseEntity.ok("Order Service is running and listening oh yea");
     }
+
 
     @GetMapping("/index")
     public ResponseEntity<Page<Order>> index(@RequestParam(defaultValue = "0") int page,
