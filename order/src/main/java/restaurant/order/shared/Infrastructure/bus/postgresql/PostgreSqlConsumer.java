@@ -4,6 +4,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import restaurant.order.shared.Infrastructure.bus.event.DomainEventsInformation;
@@ -27,7 +29,6 @@ public class PostgreSqlConsumer {
 
     private final EventBus bus;
     private final Integer CHUNKS = 200;
-    private volatile Boolean shouldStop = false;
 
     public PostgreSqlConsumer(
             EntityManager entityManager,
@@ -39,78 +40,70 @@ public class PostgreSqlConsumer {
         this.bus = bus;
     }
 
+    /**
+     * Scheduled polling: polls every 2 seconds (configurable)
+     */
+    @Scheduled(fixedDelayString = "${events.polling.delay:200000}")
     @Transactional
-    public void consume() {
-        int offset = 0;
-        while (!this.shouldStop) {
-            Query query = entityManager.createNativeQuery(
-                    "SELECT id, aggregate_id, name, body, occurred_on FROM domain_events ORDER BY occurred_on ASC LIMIT :chunk OFFSET :offset"
-            );
-            query.setParameter("chunk", CHUNKS);
-            query.setParameter("offset", offset);
+    public void pollEvents() {
+        consumeChunk();
+    }
 
-            List<Object[]> events = query.getResultList();
+    @Transactional
+    public void consumeChunk() {
+        Query query = entityManager.createNativeQuery(
+                "SELECT id, aggregate_id, name, body, occurred_on " +
+                        "FROM domain_events " +
+                        "WHERE consumed = FALSE " +
+                        "ORDER BY occurred_on ASC " +
+                        "LIMIT :chunk"
+        );
+        query.setParameter("chunk", CHUNKS);
 
-            if (events.isEmpty()) {
-                break;
-            }
+        List<Object[]> events = query.getResultList();
+        if (events.isEmpty()) return;
 
-
+        for (Object[] row : events) {
             try {
-                for (Object[] event : events) {
-
-                    System.out.println("Event ID: " + event[0]);
-                    System.out.println("Aggregate ID: " + event[1]);
-                    System.out.println("Event Name: " + event[2]);
-                    System.out.println("Event Body: " + event[3]);
-                    System.out.println("Occurred On: " + event[4]);
-
-                    executeSubscribers(
-                            (String) event[0],
-                            (String) event[1],
-                            (String) event[2],
-                            (String) event[3],
-                            Timestamp.valueOf((String) (event[4] += " 00:00:00" ))
-                    );
-                }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
-                     InstantiationException e) {
-                e.printStackTrace();
+                DomainEvent domainEvent = buildDomainEvent(row);
+                publishEventAsync(domainEvent);
+                markAsConsumed((String) row[0]);
+            } catch (Exception e) {
+                e.printStackTrace(); // optional: add logging for failed events
             }
-            offset += CHUNKS;
-            entityManager.clear();
         }
+
+        entityManager.clear(); // free memory
     }
 
-    public void stop() {
-        this.shouldStop = true;
-    }
+    private DomainEvent buildDomainEvent(Object[] row) throws Exception {
+        String id = (String) row[0];
+        String aggregateId = (String) row[1];
+        String eventName = (String) row[2];
+        String body = (String) row[3];
+        String occurredOnStr = (String) row[4];
+        Timestamp occurredOn = Timestamp.valueOf(occurredOnStr + " 00:00:00");
 
-    private void executeSubscribers(
-            String id, String aggregateId, String eventName, String body, Timestamp occurredOn
-    ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-
-        Class<? extends DomainEvent> domainEventClass = this.domainEventsInformation.forName(eventName);
-
+        Class<? extends DomainEvent> domainEventClass = domainEventsInformation.forName(eventName);
         DomainEvent nullInstance = domainEventClass.getConstructor().newInstance();
 
-        Method fromPrimitivesMethod = domainEventClass.getMethod(
-                "fromPrimitives",
-                String.class,
-                HashMap.class,
-                String.class,
-                String.class
-        );
+        return (DomainEvent) domainEventClass
+                .getMethod("fromPrimitives", String.class, HashMap.class, String.class, String.class)
+                .invoke(nullInstance, aggregateId, Utils.jsonDecode(body), id, Utils.dateToString(occurredOn));
+    }
 
-        Object domainEvent = fromPrimitivesMethod.invoke(
-                nullInstance,
-                aggregateId,
-                Utils.jsonDecode(body),
-                id,
-                Utils.dateToString(occurredOn)
-        );
+    @Async
+    protected void publishEventAsync(DomainEvent event) {
+        bus.publish(Collections.singletonList(event));
+    }
 
-        this.bus.publish(Collections.singletonList((DomainEvent) domainEvent));
+    @Transactional
+    public void markAsConsumed(String eventId) {
+        Query q = entityManager.createNativeQuery(
+                "UPDATE domain_events SET consumed = TRUE WHERE id = :id"
+        );
+        q.setParameter("id", eventId);
+        q.executeUpdate();
     }
 
 }
