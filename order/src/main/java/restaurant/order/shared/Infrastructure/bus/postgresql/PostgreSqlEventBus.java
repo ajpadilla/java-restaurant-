@@ -6,13 +6,15 @@ import org.springframework.stereotype.Service;
 import restaurant.order.shared.domain.Utils;
 import restaurant.order.shared.domain.bus.event.DomainEvent;
 import restaurant.order.shared.domain.bus.event.EventBus;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
 @Service
-public final class  PostgreSqlEventBus implements EventBus {
+public class  PostgreSqlEventBus implements EventBus {
     private final EntityManager entityManager;
 
     public PostgreSqlEventBus(EntityManager entityManager) {
@@ -20,6 +22,8 @@ public final class  PostgreSqlEventBus implements EventBus {
     }
 
     @Override
+    @Transactional
+
     public void publish(List<DomainEvent> events) {
         events.forEach(this::publish);
     }
@@ -32,8 +36,8 @@ public final class  PostgreSqlEventBus implements EventBus {
         String occurredOn = domainEvent.occurredOn();
 
         Query query = entityManager.createNativeQuery(
-                "INSERT INTO domain_events (id, aggregate_id, name, body, occurred_on) " +
-                        "VALUES (:id, :aggregateId, :name, :body, :occurredOn)"
+                "INSERT INTO domain_events (id, aggregate_id, name, body, occurred_on, consumed) " +
+                        "VALUES (:id, :aggregateId, :name, :body, :occurredOn, :consumed)"
         );
 
         query.setParameter("id", id);
@@ -41,6 +45,7 @@ public final class  PostgreSqlEventBus implements EventBus {
         query.setParameter("name", name);
         query.setParameter("body", Utils.jsonEncode(body));
         query.setParameter("occurredOn", occurredOn);
+        query.setParameter("consumed", false);
 
         query.executeUpdate();
     }
