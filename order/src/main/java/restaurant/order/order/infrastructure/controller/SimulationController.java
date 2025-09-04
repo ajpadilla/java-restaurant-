@@ -18,9 +18,9 @@ public class SimulationController {
         long sum = 0;
 
         // Simulate CPU-bound task
-        /*for (int i = 0; i < 100_000_000; i++) {
+        for (int i = 0; i < 100_000_000; i++) {
             sum += Math.sqrt(i);
-        }*/
+        }
 
         long end = System.currentTimeMillis();
         String threadName = Thread.currentThread().getName();
