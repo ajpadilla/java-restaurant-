@@ -1,9 +1,13 @@
 spring:
+  application:
+    name: restaurant-order-service
+
   datasource:
     url: jdbc:postgresql://localhost:5432/restaurant_kitchen
     driver-class-name: org.postgresql.Driver
     username: ajpadilla
     password: Heme19234099
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -11,25 +15,77 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        generate_statistics: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
-logging:
-  level:
-    org.springframework.web: DEBUG
+  kafka:
+    producer:
+      bootstrap-servers: kafka:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      bootstrap-servers: kafka:9092
+      group-id: restaurant-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
 
-kafka:
-  producer:
-    bootstrap-servers: localhost:9092
-    key-serializer: org.apache.kafka.common.serialization.StringSerializer
-    #value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  boot:
+    admin:
+      client:
+        url: http://localhost:8080       # Admin Server URL
+        username: admin                  # Admin Server credentials
+        password: admin
+        enabled: true
+        instance:
+          service-base-url: http://localhost:8081
+          management-base-url: http://localhost:8081
 
 server:
   address: 0.0.0.0
   port: 8081
 
+management:
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include: "*"
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+  metrics:
+    enable:
+      all: true
+      distribution:
+        percentiles-histogram:
+          orders_create: true   # histogram for our @Timed metric
+          orders_save: true
+
+logging:
+  level:
+    org.springframework: INFO
+    restaurant.order: DEBUG
+    de.codecentric.boot.admin.client.registration: TRACE
+    de.codecentric.boot.admin.client: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.p6spy: DEBUG
+info:
+  app:
+    name: ${spring.application.name}
+    version: 0.0.1
+    description: Restaurant Order Microservice
+
 paypal:
   client-id: AW-8nDPUgijsSuffgM0EOyuXUZgXGeSSXRjA0ZPgdO11fFDZ7bXZ3KbRZej-IHdBtveItNg_MJRfF2E7
   client-secret: EDreEji3GkwMVCYMaZIP9AQjMJEOCFz89QBIYm0Y_QqArNSuXGvigigRZmm8H0oZzvOy6XZG2y1bEwpT
-  mode: sandbox # Use #sandbox' for testing and 'live' for Production
+  mode: sandbox # Use 'sandbox' for testing and 'live' for Production
+
+events:
+  polling:
+    delay: 200000
