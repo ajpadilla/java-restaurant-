@@ -1,5 +1,6 @@
 package restaurant.order.ingredients.infrastructure.controller;
 
+import io.micrometer.core.instrument.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -31,11 +32,18 @@ public class IngredientsController extends ApiController {
     @Autowired
     private final QueryBus queryBus;
 
+    private final DistributionSummary httpRequestsDurationHistogram;
 
-    public IngredientsController(QueryBus queryBus, CommandBus commandBus) {
+    public IngredientsController(QueryBus queryBus, CommandBus commandBus, MeterRegistry registry) {
         super(queryBus, commandBus);
         this.commandBus = commandBus;
         this.queryBus = queryBus;
+
+        // Register your histogram
+        this.httpRequestsDurationHistogram = DistributionSummary.builder("ingredient_create_histogram")
+                .description("Time taken to create an ingredient")
+                .publishPercentileHistogram()
+                .register(registry);
     }
 
     @GetMapping("/index")
@@ -47,7 +55,13 @@ public class IngredientsController extends ApiController {
 
     @PostMapping("/create")
     public ResponseEntity<String> register(@RequestBody CreateIngredientRequest request) throws CommandNotRegisteredError {
+        long start = System.currentTimeMillis();
+
         this.dispatch(new CreateIngredientCommand(request.getId(), request.getName(), request.getQuantity()));
+
+        long duration = System.currentTimeMillis() - start;
+        httpRequestsDurationHistogram.record(duration);
+
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
