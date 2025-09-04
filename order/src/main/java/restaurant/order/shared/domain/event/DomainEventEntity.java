@@ -27,6 +27,9 @@ public class DomainEventEntity {
     @Column(name = "body", nullable = false, columnDefinition = "TEXT")
     private String body;
 
+    @Column(name = "consumed", nullable = false)
+    private Boolean consumed = false;
+
     @Column(name = "occurred_on", nullable = false)
     private String occurredOn;
 }
