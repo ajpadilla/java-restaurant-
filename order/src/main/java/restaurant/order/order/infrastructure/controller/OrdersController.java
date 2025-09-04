@@ -16,6 +16,9 @@ import restaurant.order.shared.domain.bus.command.CommandNotRegisteredError;
 import restaurant.order.shared.domain.bus.query.QueryBus;
 import restaurant.order.shared.domain.bus.query.QueryHandlerExecutionError;
 
+import io.micrometer.core.annotation.Timed;
+
+
 @RestController
 @RequestMapping("/api/v1/orders")
 public class OrdersController extends ApiController {
@@ -33,20 +36,26 @@ public class OrdersController extends ApiController {
         this.queryBus = queryBus;
     }
 
+    @Timed(value = "orders.health", description = "Time taken to check health", histogram = true)
     @GetMapping("/health")
     public ResponseEntity<String> health() {
         String threadName = Thread.currentThread().getName();
         System.out.println("Handling health check on thread: " + threadName);
-        try {
-            Thread.sleep(5000); // Simulate load
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+
+        long start = System.currentTimeMillis();
+        long sum = 0;
+
+        // Busy loop for ~5 seconds to simulate CPU load
+        while (System.currentTimeMillis() - start < 5000) {
+            sum += (long) Math.sqrt(Math.random() * 1000);
         }
-        return ResponseEntity.ok("Thread: " + threadName + " handled the request");
+
+        return ResponseEntity.ok("Thread: " + threadName + " handled the request with sum: " + sum);
     }
 
 
 
+    @Timed(value = "orders.index", description = "Time taken to list orders")
     @GetMapping("/index")
     public ResponseEntity<Page<Order>> index(@RequestParam(defaultValue = "0") int page,
                                              @RequestParam(defaultValue = "10") int size) throws QueryHandlerExecutionError {
@@ -54,6 +63,7 @@ public class OrdersController extends ApiController {
         return ResponseEntity.ok(response.response());
     }
 
+    @Timed(value = "orders.create", description = "Time taken to create an order")
     @PostMapping("/create")
     public ResponseEntity<String> register(@RequestBody CreateOrderRequest request) throws CommandNotRegisteredError {
         this.dispatch(new CreateOrderCommand(request.getId(), request.getPlateIds()));
