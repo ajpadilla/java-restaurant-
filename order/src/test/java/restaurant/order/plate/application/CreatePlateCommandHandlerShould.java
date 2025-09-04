@@ -90,7 +90,7 @@ public class CreatePlateCommandHandlerShould {
             System.out.println("Occurred On: " + event[4]);
         }*/
 
-        this.consumer.consume();
+        //this.consumer.consume();
         //this.consumer.stop();
 
     }
