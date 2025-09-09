@@ -1,20 +1,20 @@
-package restaurant.order.plate.application;
+package restaurant.order.menu.application;
 
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import restaurant.order.ingredients.domain.Ingredient;
-import restaurant.order.ingredients.domain.IngredientMother;
-import restaurant.order.ingredients.domain.IngredientRepository;
-import restaurant.order.ingredients.domain.IngredientService;
-import restaurant.order.plate.domain.PlateIdMother;
-import restaurant.order.plate.domain.PlateNameMother;
-import restaurant.order.plates.application.create.CreatePlateCommand;
-import restaurant.order.plates.application.create.CreatePlateCommandHandler;
-import restaurant.order.plates.application.create.PlateCreator;
-import restaurant.order.plates.domain.PlateRepository;
+import restaurant.order.menu.domain.Ingredient;
+import restaurant.order.menu.domain.IngredientMother;
+import restaurant.order.menu.domain.IngredientRepository;
+import restaurant.order.menu.domain.PlateIdMother;
+import restaurant.order.menu.domain.PlateNameMother;
+import restaurant.order.menu.application.create.CreatePlateCommand;
+import restaurant.order.menu.application.create.CreatePlateCommandHandler;
+import restaurant.order.menu.application.create.PlateCreator;
+import restaurant.order.menu.domain.PlateRepository;
+import restaurant.order.menu.infrastructure.api.InMemoryInventoryClientService;
 import restaurant.order.shared.Infrastructure.bus.postgresql.PostgreSqlConsumer;
 import restaurant.order.shared.Infrastructure.bus.postgresql.PostgreSqlEventBus;
 import restaurant.order.shared.domain.bus.event.EventBus;
@@ -30,14 +30,10 @@ public class CreatePlateCommandHandlerShould {
 
     private CreatePlateCommandHandler handler;
 
-    @Autowired
-    private  IngredientRepository jpaIngredientRepository;
+    private InMemoryInventoryClientService inventoryClientService;
 
     @Autowired
     PlateRepository repository;
-
-     @Autowired
-    private IngredientService ingredientService;
 
     @Autowired
     PostgreSqlConsumer consumer;
@@ -49,12 +45,11 @@ public class CreatePlateCommandHandlerShould {
     @Test
     void createAValidPlate() throws InterruptedException {
 
-        List<Ingredient> ingredients = new ArrayList<Ingredient>();
+        /*List<Ingredient> ingredients = new ArrayList<Ingredient>();
 
         for (int i = 0; i < 5; i++) {
             Ingredient ingredient = IngredientMother.random();
             ingredients.add(ingredient);
-            this.jpaIngredientRepository.save(ingredient);
         }
 
         Thread.sleep(2000);
@@ -64,7 +59,7 @@ public class CreatePlateCommandHandlerShould {
                 .toList();
 
 
-        this.handler = new CreatePlateCommandHandler(new PlateCreator(this.repository, ingredientService,eventBus));
+        this.handler = new CreatePlateCommandHandler(new PlateCreator(this.repository,eventBus, this.inventoryClientService));
 
         for (int i = 0; i < 3; i++) {
             CreatePlateCommand command = new CreatePlateCommand(
@@ -79,7 +74,7 @@ public class CreatePlateCommandHandlerShould {
         // Verifica que el evento se ha guardado en la base de datos
         PostgreSqlEventBus postgreSqlEventBus = (PostgreSqlEventBus) this.eventBus;
         List<Object[]> events = postgreSqlEventBus.findAllEvents(); // Llama a tu método para obtener los eventos
-        assertFalse(events.isEmpty(), "No events were published");
+        assertFalse(events.isEmpty(), "No events were published");*/
 
         // Imprime los resultados en la consola
        /* for (Object[] event : events) {

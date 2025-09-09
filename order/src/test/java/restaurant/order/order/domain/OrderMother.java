@@ -1,11 +1,6 @@
 package restaurant.order.order.domain;
 
-import restaurant.order.ingredients.domain.Ingredient;
-import restaurant.order.ingredients.domain.IngredientMother;
-import restaurant.order.plate.domain.PlateIdMother;
-import restaurant.order.plate.domain.PlateMother;
-import restaurant.order.plate.domain.PlateNameMother;
-import restaurant.order.plates.domain.Plate;
+import restaurant.order.menu.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;

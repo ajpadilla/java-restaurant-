@@ -1,11 +1,11 @@
-package restaurant.order.plate.infrastructure.persistence;
+package restaurant.order.menu.infrastructure.persistence;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import restaurant.order.plate.domain.PlateIdMother;
-import restaurant.order.plate.domain.PlateMother;
-import restaurant.order.plates.domain.Plate;
-import restaurant.order.plates.infrastructure.persistence.InMemoryPlateRepository;
+import restaurant.order.menu.domain.PlateIdMother;
+import restaurant.order.menu.domain.PlateMother;
+import restaurant.order.menu.domain.Plate;
+import restaurant.order.menu.infrastructure.persistence.InMemoryPlateRepository;
 
 import java.util.Optional;
 

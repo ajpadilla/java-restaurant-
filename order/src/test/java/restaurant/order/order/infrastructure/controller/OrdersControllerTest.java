@@ -1,38 +1,30 @@
 package restaurant.order.order.infrastructure.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-import restaurant.order.ingredients.domain.*;
+import restaurant.order.menu.domain.*;
 import restaurant.order.order.domain.*;
-import restaurant.order.plate.domain.PlateIdMother;
-import restaurant.order.plate.domain.PlateMother;
-import restaurant.order.plate.domain.PlateNameMother;
-import restaurant.order.plates.domain.Plate;
-import restaurant.order.plates.domain.PlateRepository;
+import restaurant.order.menu.domain.PlateIdMother;
+import restaurant.order.menu.domain.PlateMother;
+import restaurant.order.menu.domain.PlateNameMother;
+import restaurant.order.menu.domain.Plate;
+import restaurant.order.menu.domain.PlateRepository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @Transactional
@@ -43,9 +35,6 @@ public class OrdersControllerTest {
 
     @Autowired
     protected OrderRepository orderRepository;
-
-    @Autowired
-    protected IngredientRepository jpaIngredientRepository;
 
     @Autowired
     protected PlateRepository plateRepository;
@@ -67,7 +56,6 @@ public class OrdersControllerTest {
         for (int i = 0; i < 5; i++) {
             Ingredient ingredient = IngredientMother.random();
             this.ingredients.add(ingredient);
-            this.jpaIngredientRepository.save(ingredient);
         }
 
         this.plate = PlateMother.create(PlateIdMother.random(), PlateNameMother.random(), this.ingredients);

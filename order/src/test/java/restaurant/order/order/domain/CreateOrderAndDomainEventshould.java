@@ -1,8 +1,8 @@
 package restaurant.order.order.domain;
 
 import org.junit.jupiter.api.Test;
-import restaurant.order.plate.domain.PlateMother;
-import restaurant.order.plates.domain.Plate;
+import restaurant.order.menu.domain.PlateMother;
+import restaurant.order.menu.domain.Plate;
 
 import java.util.List;
 

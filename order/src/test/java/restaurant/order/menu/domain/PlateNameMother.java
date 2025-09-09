@@ -1,6 +1,5 @@
-package restaurant.order.plate.domain;
+package restaurant.order.menu.domain;
 
-import restaurant.order.plates.domain.PlateName;
 import restaurant.order.shared.test.WordMother;
 
 public class PlateNameMother {
