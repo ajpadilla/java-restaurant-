@@ -2,7 +2,7 @@ package restaurant.order.order.application.create;
 
 import org.springframework.stereotype.Service;
 import restaurant.order.order.domain.OrderId;
-import restaurant.order.plates.domain.PlateId;
+import restaurant.order.menu.domain.PlateId;
 import restaurant.order.shared.domain.bus.command.CommandHandler;
 
 import java.util.List;

@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import restaurant.order.order.domain.Order;
 import restaurant.order.order.domain.OrderId;
-import restaurant.order.plates.domain.Plate;
-import restaurant.order.plates.infrastructure.entity.PlateEntity;
+import restaurant.order.menu.domain.Plate;
+import restaurant.order.menu.infrastructure.entity.PlateEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;

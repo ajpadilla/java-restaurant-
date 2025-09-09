@@ -1,6 +1,5 @@
-package com.restaurant.shared.infrastructure.api;
+package restaurant.order.shared.Infrastructure.api;
 
-import org.apache.kafka.common.requests.ApiError;
 import  restaurant.order.menu.domain.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +26,21 @@ public class GlobalExceptionHandler {
         ApiError error = new ApiError("IngredientNotFound", ex.getMessage(), HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.badRequest().body(error);
     }
+    @ExceptionHandler(PlateWithoutIngredientsException.class)
+    public ResponseEntity<ApiError> handleIngredientNotFound(PlateWithoutIngredientsException ex) {
+        ApiError error = new ApiError("PlateWithoutIngredients", ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(IngredientQuantityMustBePositiveException.class)
+    public ResponseEntity<ApiError> handleIngredientNotFound(IngredientQuantityMustBePositiveException ex) {
+        ApiError error = new ApiError("PlateWithoutIngredients", ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return ResponseEntity.badRequest().body(error);
+    }
 
     @ExceptionHandler(Exception.class) // fallback for unexpected errors
     public ResponseEntity<ApiError> handleGenericException(Exception ex) {
-        ApiError error = new ApiError("InternalServerError", "Unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        ApiError error = new ApiError("InternalServerError", ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }

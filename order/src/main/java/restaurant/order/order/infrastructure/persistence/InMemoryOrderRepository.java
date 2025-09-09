@@ -1,6 +1,7 @@
 package restaurant.order.order.infrastructure.persistence;
 
 import org.springframework.data.domain.Page;
+import restaurant.order.order.application.find.dto.OrderResponse;
 import restaurant.order.order.domain.Order;
 import restaurant.order.order.domain.OrderId;
 import restaurant.order.order.domain.OrderRepository;
@@ -22,7 +23,7 @@ public class InMemoryOrderRepository implements OrderRepository {
     }
 
     @Override
-    public Page<Order> searchAll(int page, int size) {
+    public Page<OrderResponse> searchAll(int page, int size) {
         return null;
     }
 }

@@ -12,11 +12,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import restaurant.order.order.application.find.dto.PlateResponse;
+import restaurant.order.order.application.find.dto.OrderResponse;
 import restaurant.order.order.domain.Order;
 import restaurant.order.order.domain.OrderId;
 import restaurant.order.order.domain.OrderRepository;
 import restaurant.order.order.infrastructure.entity.OrderEntity;
-import restaurant.order.plates.infrastructure.entity.PlateEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,24 +32,6 @@ public class JpaOrderRepository implements OrderRepository {
     @Override
     public void save(Order order) {
         OrderEntity orderEntity = OrderEntity.fromDomain(order);
-        List<PlateEntity> plateEntities = orderEntity.getPlates();
-
-        plateEntities.forEach(plateEntity -> {
-            if (plateEntity != null) {
-                // Verifica si el PlateEntity ya está persistido
-                PlateEntity managedPlateEntity = this.entityManager.find(PlateEntity.class, plateEntity.getId());
-
-                if (managedPlateEntity == null) {
-                    // Persistir PlateEntity si no está ya guardado
-                    this.entityManager.persist(plateEntity);
-                } else {
-                    // Actualiza la referencia en OrderEntity
-                    orderEntity.getPlates().set(orderEntity.getPlates().indexOf(plateEntity), managedPlateEntity);
-                }
-            }
-        });
-
-        // Ahora persiste el OrderEntity
         this.entityManager.persist(orderEntity);
     }
 
@@ -59,7 +42,7 @@ public class JpaOrderRepository implements OrderRepository {
     }
 
     @Override
-    public Page<Order> searchAll(int page, int size) {
+    public Page<OrderResponse> searchAll(int page, int size) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<OrderEntity> cq = cb.createQuery(OrderEntity.class);
         Root<OrderEntity> rootEntry = cq.from(OrderEntity.class);
@@ -78,8 +61,20 @@ public class JpaOrderRepository implements OrderRepository {
         //System.out.println("orderEntity:" + orderEntity.stream().toList());
 
         // Convertir a dominio
-        List<Order> orders = orderEntity.stream()
+        /**List<Order> orders = orderEntity.stream()
                 .map(OrderEntity::toDomain)
+                .toList();*/
+
+        // Convert entities -> DTOs
+        List<OrderResponse> orders = orderEntity.stream()
+                .map(o -> new OrderResponse(
+                        o.getId(),
+                        o.getPlates().stream()
+                                .map(p -> new PlateResponse(
+                                        p.getId()
+                                ))
+                                .toList()
+                ))
                 .toList();
 
         //System.out.println("orders:" + orders);

@@ -1,6 +1,6 @@
 package restaurant.order.order.domain;
 
-import restaurant.order.plates.domain.Plate;
+import restaurant.order.menu.domain.Plate;
 
 import java.io.Serializable;
 import java.util.HashMap;

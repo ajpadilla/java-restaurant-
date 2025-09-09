@@ -1,17 +1,17 @@
 package restaurant.order.order.application.create;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import restaurant.order.kafka.KafkaOrderJsonService;
-import restaurant.order.order.domain.CastOrderToJsonService;
 import restaurant.order.order.domain.Order;
 import restaurant.order.order.domain.OrderId;
 import restaurant.order.order.domain.OrderRepository;
-import restaurant.order.plates.domain.Plate;
-import restaurant.order.plates.domain.PlateId;
-import restaurant.order.plates.domain.PlateService;
+import restaurant.order.menu.domain.Plate;
+import restaurant.order.menu.domain.PlateId;
+import restaurant.order.menu.domain.PlateService;
+import restaurant.order.shared.domain.bus.event.EventBus;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderCreator {
@@ -20,13 +20,15 @@ public class OrderCreator {
 
     private final PlateService service;
 
+    private final EventBus eventBus;
     private final KafkaOrderJsonService orderJsonService;
 
 
-    public OrderCreator(OrderRepository repository, PlateService service, KafkaOrderJsonService orderJsonService) {
+    public OrderCreator(OrderRepository repository, PlateService service, KafkaOrderJsonService orderJsonService, @Qualifier("postgreSqlEventBus") EventBus eventBus) {
         this.repository = repository;
         this.service = service;
         this.orderJsonService = orderJsonService;
+        this.eventBus = eventBus;
     }
 
     public void create(OrderId id, List<PlateId> plateIds) {
@@ -36,7 +38,8 @@ public class OrderCreator {
                 .toList();
 
         Order order = Order.create(id, plates);
-        this.orderJsonService.send(new CastOrderToJsonService(order).createMap());
+      //  this.orderJsonService.send(new CastOrderToJsonService(order).createMap());
         this.repository.save(order);
+        this.eventBus.publish(order.pullDomainEvents());
     }
 }

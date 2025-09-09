@@ -1,6 +1,6 @@
 package restaurant.order.order.domain;
 
-import restaurant.order.plates.domain.Plate;
+import restaurant.order.menu.domain.Plate;
 import restaurant.order.shared.domain.AggregateRoot;
 
 import java.util.HashSet;
@@ -38,7 +38,12 @@ public class Order extends AggregateRoot {
         validateNoDuplicates(plates);
 
         Order order = new Order(id, plates);
-        order.record(new OrderCreatedDomainEvent(id.getValue()));
+
+        List<String> plateIds = plates.stream()
+                .map(ingredient -> ingredient.getId().getValue())
+                .toList();
+
+        order.record(new OrderCreatedDomainEvent(id.getValue(), plateIds));
         return order;
     }
 

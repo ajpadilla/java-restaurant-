@@ -7,8 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import restaurant.order.order.application.create.CreateOrderCommand;
 import restaurant.order.order.application.find.FindOrdersQuery;
-import restaurant.order.order.application.find.ListOfOrdersResponse;
-import restaurant.order.order.domain.Order;
+import restaurant.order.order.application.find.dto.OrderResponse;
 import restaurant.order.order.infrastructure.controller.requests.CreateOrderRequest;
 import restaurant.order.shared.Infrastructure.ApiController;
 import restaurant.order.shared.domain.bus.command.CommandBus;
@@ -53,14 +52,12 @@ public class OrdersController extends ApiController {
         return ResponseEntity.ok("Thread: " + threadName + " handled the request with sum: " + sum);
     }
 
-
-
     @Timed(value = "orders.index", description = "Time taken to list orders")
     @GetMapping("/index")
-    public ResponseEntity<Page<Order>> index(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<Page<OrderResponse>> index(@RequestParam(defaultValue = "0") int page,
                                              @RequestParam(defaultValue = "10") int size) throws QueryHandlerExecutionError {
-        ListOfOrdersResponse response = this.queryBus.ask(new FindOrdersQuery(page, size));
-        return ResponseEntity.ok(response.response());
+        Page<OrderResponse> response = this.queryBus.ask(new FindOrdersQuery(page, size));
+        return ResponseEntity.ok(response);
     }
 
     @Timed(value = "orders.create", description = "Time taken to create an order")
@@ -69,5 +66,4 @@ public class OrdersController extends ApiController {
         this.dispatch(new CreateOrderCommand(request.getId(), request.getPlateIds()));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
 }
