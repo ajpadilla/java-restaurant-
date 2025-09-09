@@ -11,37 +11,50 @@ import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Set;
 
+
 @Service
 public final class QueryHandlersInformation {
-    HashMap<Class<? extends Query>, Class<? extends QueryHandler>> indexedQueryHandlers;
+
+    private final HashMap<Class<? extends Query>, Class<? extends QueryHandler<?, ?>>> indexedQueryHandlers;
 
     public QueryHandlersInformation() {
         Reflections reflections = new Reflections("restaurant.order");
-        Set<Class<? extends QueryHandler>> classes     = reflections.getSubTypesOf(QueryHandler.class);
+        Set<Class<? extends QueryHandler>> classes = reflections.getSubTypesOf(QueryHandler.class);
 
-        indexedQueryHandlers = formatHandlers(classes);
+        this.indexedQueryHandlers = formatHandlers(classes);
     }
 
-    public Class<? extends QueryHandler> search(Class<? extends Query> queryClass) throws QueryNotRegisteredError {
-        Class<? extends QueryHandler> queryHandlerClass = indexedQueryHandlers.get(queryClass);
+    /**
+     * Search for the QueryHandler class associated with a given Query class.
+     */
+    public Class<? extends QueryHandler<?, ?>> search(Class<? extends Query> queryClass) throws QueryNotRegisteredError {
+        Class<? extends QueryHandler<?, ?>> queryHandlerClass = indexedQueryHandlers.get(queryClass);
 
-        if (null == queryHandlerClass) {
+        if (queryHandlerClass == null) {
             throw new QueryNotRegisteredError(queryClass);
         }
 
         return queryHandlerClass;
     }
 
-    private HashMap<Class<? extends Query>, Class<? extends QueryHandler>> formatHandlers(
+    /**
+     * Builds a map of Query -> QueryHandler class.
+     */
+    @SuppressWarnings("unchecked")
+    private HashMap<Class<? extends Query>, Class<? extends QueryHandler<?, ?>>> formatHandlers(
             Set<Class<? extends QueryHandler>> queryHandlers
     ) {
-        HashMap<Class<? extends Query>, Class<? extends QueryHandler>> handlers = new HashMap<>();
+        HashMap<Class<? extends Query>, Class<? extends QueryHandler<?, ?>>> handlers = new HashMap<>();
 
         for (Class<? extends QueryHandler> handler : queryHandlers) {
-            ParameterizedType paramType  = (ParameterizedType) handler.getGenericInterfaces()[0];
+            // Extract the first generic interface implemented by the handler
+            ParameterizedType paramType = (ParameterizedType) handler.getGenericInterfaces()[0];
+
+            // The first type argument is the Query class
             Class<? extends Query> queryClass = (Class<? extends Query>) paramType.getActualTypeArguments()[0];
 
-            handlers.put(queryClass, handler);
+            // Store with proper generic parameterization
+            handlers.put(queryClass, (Class<? extends QueryHandler<?, ?>>) handler);
         }
 
         return handlers;

@@ -15,15 +15,17 @@ public final class InMemoryQueryBus implements QueryBus {
     }
 
     @Override
-    public Response ask(Query query) throws QueryHandlerExecutionError {
+    @SuppressWarnings("unchecked")
+    public <R> R ask(Query query) throws QueryHandlerExecutionError {
         try {
-            Class<? extends QueryHandler> queryHandlerClass = information.search(query.getClass());
+            Class<? extends QueryHandler<?, ?>> queryHandlerClass = information.search(query.getClass());
 
-            QueryHandler handler = context.getBean(queryHandlerClass);
+            QueryHandler<Query, R> handler = (QueryHandler<Query, R>) context.getBean(queryHandlerClass);
 
             return handler.handle(query);
         } catch (Throwable error) {
             throw new QueryHandlerExecutionError(error);
         }
     }
+
 }
