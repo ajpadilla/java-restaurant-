@@ -1,6 +1,7 @@
 package restaurant.order.menu.domain;
 
 import org.springframework.stereotype.Service;
+import restaurant.order.menu.domain.exception.PlateNotFoundException;
 import restaurant.order.shared.domain.InvalidUUIDException;
 import restaurant.order.shared.domain.Utils;
 
