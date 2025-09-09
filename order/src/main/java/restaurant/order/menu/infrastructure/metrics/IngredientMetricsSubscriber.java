@@ -4,7 +4,7 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import restaurant.order.ingredients.domain.IngredientCreatedDomainEvent;
+import restaurant.order.menu.domain.IngredientCreatedDomainEvent;
 
 @Service
 public class IngredientMetricsSubscriber {

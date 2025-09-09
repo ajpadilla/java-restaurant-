@@ -1,9 +1,10 @@
 package restaurant.order.menu.infrastructure.persistence;
 
 import org.springframework.data.domain.Page;
-import restaurant.order.plates.domain.Plate;
-import restaurant.order.plates.domain.PlateId;
-import restaurant.order.plates.domain.PlateRepository;
+import restaurant.order.menu.application.find.dto.PlateResponse;
+import restaurant.order.menu.domain.Plate;
+import restaurant.order.menu.domain.PlateId;
+import restaurant.order.menu.domain.PlateRepository;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class InMemoryPlateRepository implements PlateRepository {
     }
 
     @Override
-    public Page<Plate> searchAll(int page, int size) {
+    public Page<PlateResponse> searchAll(int page, int size) {
         return null;
     }
 }

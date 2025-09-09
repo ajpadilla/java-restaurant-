@@ -1,18 +1,8 @@
-package restaurant.order.menu.application.find;
+package restaurant.order.menu.application.find.dto;
 
 import restaurant.order.menu.domain.Plate;
 import restaurant.order.shared.domain.bus.query.Response;
 
-public class PlateResponse implements Response {
+import java.util.List;
 
-    private final Plate plate;
-
-
-    public PlateResponse(Plate plate) {
-        this.plate = plate;
-    }
-
-    public Plate getPlate() {
-        return plate;
-    }
-}
+public record PlateResponse(String id, String name, List<IngredientResponse> ingredients) implements Response { }

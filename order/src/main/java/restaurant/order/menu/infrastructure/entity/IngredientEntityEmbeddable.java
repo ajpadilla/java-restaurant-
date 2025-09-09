@@ -1,9 +1,6 @@
 package restaurant.order.menu.infrastructure.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.*;
 import restaurant.order.menu.domain.Ingredient;
 import restaurant.order.menu.domain.IngredientId;
@@ -17,13 +14,13 @@ import restaurant.order.menu.domain.IngredientQuantity;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class IngredientEntity {
+public class IngredientEntityEmbeddable {
     private String id;
     private String name;
     private Integer quantity;
 
-    public static IngredientEntity fromDomain(Ingredient ingredient) {
-        return IngredientEntity
+    public static IngredientEntityEmbeddable fromDomain(Ingredient ingredient) {
+        return IngredientEntityEmbeddable
                 .builder()
                 .id(ingredient.getId().getValue())
                 .name(ingredient.getName().getValue())

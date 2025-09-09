@@ -1,10 +1,12 @@
-package restaurant.order.menu.application.create.find;
+package restaurant.order.menu.application.find;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import restaurant.order.menu.application.find.dto.PlateResponse;
 import restaurant.order.shared.domain.bus.query.QueryHandler;
 
 @Service
-public class FindPlatesQueryHandler implements QueryHandler<FindPlatesQuery, ListOfPlateResponse> {
+public class FindPlatesQueryHandler implements QueryHandler<FindPlatesQuery,  Page<PlateResponse>> {
 
     private final PlatesFinder finder;
 
@@ -13,7 +15,7 @@ public class FindPlatesQueryHandler implements QueryHandler<FindPlatesQuery, Lis
     }
 
     @Override
-    public ListOfPlateResponse handle(FindPlatesQuery query) {
+    public Page<PlateResponse> handle(FindPlatesQuery query) {
         return this.finder.find(query.getPage(), query.getSize());
     }
 }

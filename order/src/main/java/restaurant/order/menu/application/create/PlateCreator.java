@@ -1,14 +1,9 @@
-package restaurant.order.plates.application.create;
+package restaurant.order.menu.application.create;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import restaurant.order.ingredients.domain.Ingredient;
-import restaurant.order.ingredients.domain.IngredientId;
-import restaurant.order.ingredients.domain.IngredientService;
-import restaurant.order.plates.domain.Plate;
-import restaurant.order.plates.domain.PlateId;
-import restaurant.order.plates.domain.PlateName;
-import restaurant.order.plates.domain.PlateRepository;
+import restaurant.order.menu.domain.*;
+import restaurant.order.menu.infrastructure.api.InMemoryInventoryClientService;
 import restaurant.order.shared.domain.bus.event.EventBus;
 
 import java.util.ArrayList;
@@ -18,27 +13,25 @@ import java.util.stream.Collectors;
 @Service
 public class PlateCreator {
     private final PlateRepository repository;
-    private IngredientService ingredientService = null;
-    List<Ingredient> ingredients;
 
     private final EventBus eventBus;
 
-    public PlateCreator(PlateRepository repository, IngredientService ingredientService, @Qualifier("postgreSqlEventBus") EventBus eventBus) {
+    private final InMemoryInventoryClientService inventoryClientService;
+
+    public PlateCreator(PlateRepository repository, @Qualifier("postgreSqlEventBus") EventBus eventBus, InMemoryInventoryClientService inventoryClientService) {
         this.repository = repository;
-        this.ingredientService = ingredientService;
-        this.ingredients = new ArrayList<>();
         this.eventBus = eventBus;
+        this.inventoryClientService = inventoryClientService;
     }
 
-    private void verifyingIngredientsBeforeToAddToPlate(List<IngredientId> ingredientIds) {
-       this.ingredients = ingredientIds.stream()
-               .map(this.ingredientService::findAnExistingIngredient)
-               .collect(Collectors.toList());
-    }
 
-    public void create(PlateId id, PlateName name, List<IngredientId> ingredientIds) {
-        this.verifyingIngredientsBeforeToAddToPlate(ingredientIds);
-        Plate plate = Plate.create(id, name, this.ingredients);
+    public void create(PlateId id, PlateName name, List<Ingredient> ingredients) {
+        // Validate ingredients against inventory
+        List<Ingredient> validIngredients = ingredients.stream()
+                .map(ingredient -> inventoryClientService.findIngredient(ingredient.getId()))
+                .toList();
+
+        Plate plate = Plate.create(id, name, ingredients);
         this.repository.save(plate);
         this.eventBus.publish(plate.pullDomainEvents());
     }

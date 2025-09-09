@@ -3,11 +3,10 @@ package restaurant.order.menu.infrastructure.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import restaurant.order.ingredients.domain.Ingredient;
-import restaurant.order.ingredients.infrastructure.entity.IngredientEntity;
-import restaurant.order.plates.domain.Plate;
-import restaurant.order.plates.domain.PlateId;
-import restaurant.order.plates.domain.PlateName;
+import restaurant.order.menu.domain.Ingredient;
+import restaurant.order.menu.domain.Plate;
+import restaurant.order.menu.domain.PlateId;
+import restaurant.order.menu.domain.PlateName;
 
 import java.util.List;
 
@@ -27,27 +26,20 @@ public class PlateEntity {
     @Column(nullable = false)
     private String name;
 
-   /* @OneToMany(mappedBy = "plate")
-    private List<OrderEntity> orders;*/
-
-    @ManyToMany
-    @JoinTable(
-            name = "ingredient_plate",
-            joinColumns = @JoinColumn(name = "plate_id"),
-            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
-    )
-    private List<IngredientEntity> ingredientEntityList;
+    @ElementCollection
+    @CollectionTable(name = "plate_ingredients", joinColumns = @JoinColumn(name = "plate_id"))
+    private List<IngredientEntityEmbeddable> ingredients;
 
     public static PlateEntity fromDomain(Plate plate) {
-        List<IngredientEntity> ingredientEntities = plate.getIngredients().stream()
-                .map(IngredientEntity::fromDomain)
+        List<IngredientEntityEmbeddable> ingredientEntities = plate.getIngredients().stream()
+                .map(IngredientEntityEmbeddable::fromDomain)
                 .toList();
         return new PlateEntity(plate.getId().getValue(), plate.getName().getValue(), ingredientEntities);
     }
 
     public Plate toDomain() {
-        List<Ingredient> ingredients = this.ingredientEntityList.stream()
-                .map(IngredientEntity::toDomain)
+        List<Ingredient> ingredients = this.ingredients.stream()
+                .map(IngredientEntityEmbeddable::toDomain)
                 .toList();
         return new Plate(new PlateId(this.id), new PlateName(this.name), ingredients);
     }

@@ -1,4 +1,4 @@
-package restaurant.order.menu.application.create.find;
+package restaurant.order.menu.application.find;
 
 import restaurant.order.shared.domain.bus.query.Query;
 public final class FindPlatesQuery implements Query  {

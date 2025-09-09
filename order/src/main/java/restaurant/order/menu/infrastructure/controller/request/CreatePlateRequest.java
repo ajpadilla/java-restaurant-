@@ -14,5 +14,15 @@ import java.util.List;
 public class CreatePlateRequest {
     private String id;
     private String name;
-    private List<String> ingredientsIds;
+    private List<PlateIngredientRequest> ingredients;
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PlateIngredientRequest {
+        private String ingredientId;
+        private String ingredientName;
+        private int requiredQuantity;
+    }
 }

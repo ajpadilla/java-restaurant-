@@ -1,30 +1,28 @@
 package restaurant.order.menu.application.create;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import restaurant.order.shared.domain.bus.command.Command;
 
 import java.util.List;
 
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreatePlateCommand implements Command {
 
-    private final String id;
-    private final String name;
+    private String id;
+    private String name;
 
-    private final List<String> ingredientsIds;
+    private List<PlateIngredientCommand> ingredients; // full ingredient info
 
-    public CreatePlateCommand(String id, String name, List<String> ingredientsIds) {
-        this.id = id;
-        this.name = name;
-        this.ingredientsIds = ingredientsIds;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public List<String> getIngredientsIds() {
-        return ingredientsIds;
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PlateIngredientCommand {
+        private String ingredientId;
+        private String ingredientName;
+        private int requiredQuantity;
     }
 }

@@ -12,10 +12,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import restaurant.order.plates.domain.Plate;
-import restaurant.order.plates.domain.PlateId;
-import restaurant.order.plates.domain.PlateRepository;
-import restaurant.order.plates.infrastructure.entity.PlateEntity;
+import restaurant.order.menu.application.find.dto.IngredientResponse;
+import restaurant.order.menu.application.find.dto.PlateResponse;
+import restaurant.order.menu.domain.Plate;
+import restaurant.order.menu.domain.PlateId;
+import restaurant.order.menu.domain.PlateRepository;
+import restaurant.order.menu.infrastructure.entity.PlateEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,39 +42,43 @@ public class JpaPlateRepository implements PlateRepository {
         return Optional.ofNullable(plateEntity.toDomain());
     }
 
+
     @Override
-    public Page<Plate> searchAll(int page, int size) {
-        CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
+    public Page<PlateResponse> searchAll(int page, int size) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<PlateEntity> cq = cb.createQuery(PlateEntity.class);
         Root<PlateEntity> rootEntry = cq.from(PlateEntity.class);
         cq.select(rootEntry);
 
-        // Crear Pageable
         Pageable pageable = PageRequest.of(page, size);
 
-        // Aplicar paginación en la consulta
-        TypedQuery<PlateEntity> query = this.entityManager.createQuery(cq);
+        // Query plates with pagination
+        TypedQuery<PlateEntity> query = entityManager.createQuery(cq);
         query.setFirstResult((int) pageable.getOffset());
         query.setMaxResults(pageable.getPageSize());
 
-        // Obtener resultados
         List<PlateEntity> platesEntity = query.getResultList();
-        //System.out.println("platesEntity:" + platesEntity.stream().toList());
 
-        // Convertir a dominio
-        List<Plate> plates = platesEntity.stream()
-                .map(PlateEntity::toDomain)
+        // Convert entities -> DTOs
+        List<PlateResponse> plates = platesEntity.stream()
+                .map(p -> new PlateResponse(
+                        p.getId(),
+                        p.getName(),
+                        p.getIngredients().stream()
+                                .map(i -> new IngredientResponse(
+                                        i.getId(),
+                                        i.getName(),
+                                        i.getQuantity()
+                                ))
+                                .toList()
+                ))
                 .toList();
 
-        //System.out.println("plates:" + plates);
-
-        // Contar total de elementos
+        // Count total
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         countQuery.select(cb.count(countQuery.from(PlateEntity.class)));
-        Long totalElements = this.entityManager.createQuery(countQuery).getSingleResult();
+        Long totalElements = entityManager.createQuery(countQuery).getSingleResult();
 
-
-        // Devolver resultados paginados
         return new PageImpl<>(plates, pageable, totalElements);
     }
 }

@@ -11,19 +11,19 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class InMemory {
+public class InMemoryInventoryClientService {
 
     // Simple in-memory storage
-    private final Map<IngredientId, Ingredient> ingredientStore = new HashMap<>();
+    private final Map<String, Ingredient> ingredientStore = new HashMap<>();
 
     // Save or update an ingredient
     public void saveIngredient(Ingredient ingredient) {
-        ingredientStore.put(ingredient.getId(), ingredient);
+        ingredientStore.put(ingredient.getId().getValue(), ingredient);
     }
 
     // Find an ingredient by ID
     public Ingredient findIngredient(IngredientId id) {
-        Ingredient ingredient = ingredientStore.get(id);
+        Ingredient ingredient = ingredientStore.get(id.getValue());
         if (ingredient == null) {
             throw new IngredientNotFoundException("Ingredient not found: " + id.getValue());
         }

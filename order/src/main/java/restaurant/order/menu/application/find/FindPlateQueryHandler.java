@@ -1,7 +1,8 @@
-package restaurant.order.menu.application.create.find;
+package restaurant.order.menu.application.find;
 
 import org.springframework.stereotype.Service;
-import restaurant.order.plates.domain.PlateId;
+import restaurant.order.menu.application.find.dto.PlateResponse;
+import restaurant.order.menu.domain.PlateId;
 import restaurant.order.shared.domain.bus.query.QueryHandler;
 
 @Service

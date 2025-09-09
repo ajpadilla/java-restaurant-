@@ -1,9 +1,7 @@
 package restaurant.order.menu.application.create;
 
 import org.springframework.stereotype.Service;
-import restaurant.order.ingredients.domain.IngredientId;
-import restaurant.order.plates.domain.PlateId;
-import restaurant.order.plates.domain.PlateName;
+import restaurant.order.menu.domain.*;
 import restaurant.order.shared.domain.bus.command.CommandHandler;
 
 import java.util.List;
@@ -21,9 +19,15 @@ public class CreatePlateCommandHandler implements CommandHandler<CreatePlateComm
     public void handle(CreatePlateCommand command) {
         PlateId id = new PlateId(command.getId());
         PlateName name = new PlateName(command.getName());
-        List<IngredientId> ingredientsIds = command.getIngredientsIds().stream()
-                .map(IngredientId::new)
+        // Map each incoming ingredient command to a domain Ingredient object
+        List<Ingredient> ingredients = command.getIngredients().stream()
+                .map(plateIngredientCommand -> new Ingredient(
+                        new IngredientId(plateIngredientCommand.getIngredientId()),
+                        new IngredientName(plateIngredientCommand.getIngredientName()),
+                        new IngredientQuantity(plateIngredientCommand.getRequiredQuantity())
+                ))
                 .toList();
-        this.creator.create(id, name, ingredientsIds);
+
+        this.creator.create(id, name, ingredients);
     }
 }
