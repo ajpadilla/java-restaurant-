@@ -7,20 +7,27 @@ import restaurant.order.menu.domain.Plate;
 import restaurant.order.menu.domain.PlateId;
 import restaurant.order.menu.domain.exception.PlateNotFoundException;
 import restaurant.order.menu.domain.PlateRepository;
+import restaurant.order.shared.cache.Cache;
 
 import java.util.List;
 
 @Service
 public class PlateFinder {
-
     private final PlateRepository repository;
+    private final Cache cache;
 
-
-    public PlateFinder(PlateRepository repository) {
+    public PlateFinder(PlateRepository repository, Cache cache) {
         this.repository = repository;
+        this.cache = cache;
     }
 
     public PlateResponse find(PlateId id) {
+        String key = "plate:" + id.getValue();
+
+        PlateResponse cached = cache.get(key, PlateResponse.class);
+        if (cached != null) return cached;
+
+
         Plate plate = repository.search(id)
                 .orElseThrow(() -> new PlateNotFoundException("Plate not found: " + id.getValue()));
 
@@ -31,6 +38,10 @@ public class PlateFinder {
                         i.getQuantity().getValue()))
                 .toList();
 
-        return new PlateResponse(plate.getId().getValue(), plate.getName().getValue(), ingredients);
+        PlateResponse response = new PlateResponse(plate.getId().getValue(), plate.getName().getValue(), ingredients);
+
+        cache.put(key, response, 300); // cache for 5 minutes
+
+        return response;
     }
 }
