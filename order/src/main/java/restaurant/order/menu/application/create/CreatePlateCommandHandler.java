@@ -2,6 +2,7 @@ package restaurant.order.menu.application.create;
 
 import org.springframework.stereotype.Service;
 import restaurant.order.menu.domain.*;
+import restaurant.order.shared.cache.Cache;
 import restaurant.order.shared.domain.bus.command.CommandHandler;
 
 import java.util.List;
@@ -11,8 +12,11 @@ public class CreatePlateCommandHandler implements CommandHandler<CreatePlateComm
 
     private final PlateCreator creator;
 
-    public CreatePlateCommandHandler(PlateCreator creator) {
+    private final Cache cache;
+
+    public CreatePlateCommandHandler(PlateCreator creator, Cache cache) {
         this.creator = creator;
+        this.cache = cache;
     }
 
     @Override
@@ -29,5 +33,10 @@ public class CreatePlateCommandHandler implements CommandHandler<CreatePlateComm
                 .toList();
 
         this.creator.create(id, name, ingredients);
+        Plate plate = new Plate(id, name, ingredients);
+
+        // Invalidate cache
+        cache.evict("plate:" + plate.getId().getValue());
+        cache.evictByPrefix("plates:"); // paginated lists
     }
 }
