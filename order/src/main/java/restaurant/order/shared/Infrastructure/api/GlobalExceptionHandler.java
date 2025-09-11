@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import restaurant.order.shared.domain.bus.command.CommandNotRegisteredError;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -35,6 +36,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IngredientQuantityMustBePositiveException.class)
     public ResponseEntity<ApiError> handleIngredientNotFound(IngredientQuantityMustBePositiveException ex) {
         ApiError error = new ApiError("PlateWithoutIngredients", ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(CommandNotRegisteredError.class)
+    public ResponseEntity<ApiError> handleIngredientNotFound(CommandNotRegisteredError ex) {
+        ApiError error = new ApiError("CommandNotRegisteredError", ex.getMessage(), HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.badRequest().body(error);
     }
 
