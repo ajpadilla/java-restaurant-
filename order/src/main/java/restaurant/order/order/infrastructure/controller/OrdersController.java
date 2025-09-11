@@ -1,6 +1,7 @@
 package restaurant.order.order.infrastructure.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import io.micrometer.core.annotation.Timed;
 @RequestMapping("/api/v1/orders")
 public class OrdersController extends ApiController {
 
+    @Qualifier("asyncCommandBus")
     @Autowired
     private final CommandBus commandBus;
 
@@ -29,7 +31,7 @@ public class OrdersController extends ApiController {
     private final QueryBus queryBus;
 
 
-    public OrdersController(QueryBus queryBus, CommandBus commandBus) {
+    public OrdersController(QueryBus queryBus, @Qualifier("asyncCommandBus") CommandBus commandBus) {
         super(queryBus, commandBus);
         this.commandBus = commandBus;
         this.queryBus = queryBus;
