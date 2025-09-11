@@ -1,4 +1,4 @@
-package restaurant.order.shared;
+package restaurant.order.shared.Infrastructure.threadpool;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
