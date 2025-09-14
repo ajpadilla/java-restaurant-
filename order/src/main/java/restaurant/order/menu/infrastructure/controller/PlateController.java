@@ -1,6 +1,7 @@
 package restaurant.order.menu.infrastructure.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,14 @@ import java.util.List;
 @RequestMapping("/api/v1/plates")
 public class PlateController extends ApiController {
 
+    @Qualifier("asyncCommandBus")
     @Autowired
     private final CommandBus commandBus;
 
     @Autowired
     private final QueryBus queryBus;
 
-    public PlateController(QueryBus queryBus, CommandBus commandBus) {
+    public PlateController(QueryBus queryBus, @Qualifier("asyncCommandBus") CommandBus commandBus) {
         super(queryBus, commandBus);
         this.commandBus = commandBus;
         this.queryBus = queryBus;

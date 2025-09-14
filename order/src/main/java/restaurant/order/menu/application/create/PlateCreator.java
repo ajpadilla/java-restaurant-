@@ -18,7 +18,7 @@ public class PlateCreator {
 
     private final InMemoryInventoryClientService inventoryClientService;
 
-    public PlateCreator(PlateRepository repository, @Qualifier("postgreSqlEventBus") EventBus eventBus, InMemoryInventoryClientService inventoryClientService) {
+    public PlateCreator(@Qualifier("monitoredJpaPlateRepository") PlateRepository repository, @Qualifier("postgreSqlEventBus") EventBus eventBus, InMemoryInventoryClientService inventoryClientService) {
         this.repository = repository;
         this.eventBus = eventBus;
         this.inventoryClientService = inventoryClientService;
