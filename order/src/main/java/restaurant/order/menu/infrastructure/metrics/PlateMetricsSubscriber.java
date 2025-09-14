@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 import restaurant.order.menu.domain.IngredientCreatedDomainEvent;
 
 @Service
-public class IngredientMetricsSubscriber {
+public class PlateMetricsSubscriber {
 
     private final Counter ingredientsCreated;
     private final Counter ingredientsFailed; // optional, if you also emit failure events
 
-    public IngredientMetricsSubscriber(MeterRegistry registry) {
+    public PlateMetricsSubscriber(MeterRegistry registry) {
         this.ingredientsCreated = Counter.builder("ingredients_created_total")
                 .description("Total number of successfully created ingredients")
                 .register(registry);
