@@ -30,6 +30,13 @@ public class AsyncCommandBus implements CommandBus {
             Class<? extends CommandHandler> handlerClass = information.search(command.getClass());
             CommandHandler handler = context.getBean(handlerClass);
 
-            commandExecutor.submit(() -> handler.handle(command));
+        commandExecutor.submit(() -> {
+            try {
+                // simulate heavy processing
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {}
+
+            handler.handle(command);
+        });
     }
 }
