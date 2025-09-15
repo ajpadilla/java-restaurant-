@@ -4,11 +4,11 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: redis
       port: 6379
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/restaurant_kitchen
+    url: jdbc:postgresql://postgres:5432/restaurant_kitchen
     driver-class-name: org.postgresql.Driver
     username: ajpadilla
     password: Heme19234099
@@ -37,16 +37,7 @@ spring:
       properties:
         spring.json.trusted.packages: '*'
 
-  boot:
-    admin:
-      client:
-        url: http://localhost:8080       # Admin Server URL
-        username: admin                  # Admin Server credentials
-        password: admin
-        enabled: true
-        instance:
-          service-base-url: http://localhost:8081
-          management-base-url: http://localhost:8081
+
 
 server:
   address: 0.0.0.0
@@ -69,7 +60,7 @@ management:
       all: true
       distribution:
         percentiles-histogram:
-          orders_create: true   # histogram for our @Timed metric
+          orders_create: true
           orders_save: true
 
 logging:
@@ -80,6 +71,9 @@ logging:
     de.codecentric.boot.admin.client: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.p6spy: DEBUG
+    restaurant.order.shared.Infrastructure.bus.event: DEBUG
+
+
 info:
   app:
     name: ${spring.application.name}
@@ -89,8 +83,8 @@ info:
 paypal:
   client-id: AW-8nDPUgijsSuffgM0EOyuXUZgXGeSSXRjA0ZPgdO11fFDZ7bXZ3KbRZej-IHdBtveItNg_MJRfF2E7
   client-secret: EDreEji3GkwMVCYMaZIP9AQjMJEOCFz89QBIYm0Y_QqArNSuXGvigigRZmm8H0oZzvOy6XZG2y1bEwpT
-  mode: sandbox # Use 'sandbox' for testing and 'live' for Production
+  mode: sandbox
 
 events:
   polling:
-    delay: 200000
+    delay: 2000
