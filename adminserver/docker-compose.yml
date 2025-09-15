@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  spring-boot-admin:
+    image: codecentric/spring-boot-admin:3.4.0
+    container_name: spring-boot-admin
+    restart: unless-stopped
+    ports:
+      - "8181:8181"
+    environment:
+      - SPRING_SECURITY_USER_NAME=admin
+      - SPRING_SECURITY_USER_PASSWORD=admin
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
