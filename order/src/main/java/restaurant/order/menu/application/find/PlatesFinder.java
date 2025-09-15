@@ -3,11 +3,14 @@ package restaurant.order.menu.application.find;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import restaurant.order.menu.application.find.dto.PlateResponse;
 import restaurant.order.menu.domain.PlateRepository;
 import restaurant.order.order.application.find.dto.OrderResponse;
 import restaurant.order.shared.cache.Cache;
+
+import java.util.List;
 
 @Service
 public class PlatesFinder {
@@ -23,16 +26,22 @@ public class PlatesFinder {
     public Page<PlateResponse> find(int page, int size) {
         String key = "plates:page=" + page + ":size=" + size;
 
-        Page<PlateResponse> cached = cache.get(
+        // Try to get list from cache
+        List<PlateResponse> cachedList = cache.get(
                 key,
-                new TypeReference<PageImpl<PlateResponse>>() {}
+                new TypeReference<List<PlateResponse>>() {}
         );
 
-        if (cached != null) return cached;
+        if (cachedList != null) {
+            return new PageImpl<>(cachedList, PageRequest.of(page, size), cachedList.size());
+        }
 
-        Page<PlateResponse> ordersPage = repository.searchAll(page, size);
-        cache.put(key, ordersPage, 300);
+        // If cache miss
+        Page<PlateResponse> platesPage = repository.searchAll(page, size);
 
-        return ordersPage;
+        // Cache only the content list
+        cache.put(key, platesPage.getContent(), 300);
+
+        return platesPage;
     }
 }
