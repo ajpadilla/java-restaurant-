@@ -6,7 +6,7 @@ import restaurant.order.shared.domain.bus.command.Command;
 import restaurant.order.shared.domain.bus.command.CommandBus;
 import restaurant.order.shared.domain.bus.command.CommandHandler;
 import restaurant.order.shared.domain.bus.command.CommandNotRegisteredError;
-
+/*
 @Service
 public final class InMemoryCommandBus implements CommandBus {
     private final CommandHandlersInformation information;
@@ -25,4 +25,4 @@ public final class InMemoryCommandBus implements CommandBus {
 
         handler.handle(command);
     }
-}
+}*/
