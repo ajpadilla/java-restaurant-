@@ -14,28 +14,20 @@ import java.util.concurrent.ExecutorService;
 public class AsyncCommandBus implements CommandBus {
 
     private final CommandHandlersInformation information;
-    private final ApplicationContext context;
     private final ExecutorService commandExecutor;
 
     public AsyncCommandBus(CommandHandlersInformation information,
-                           ApplicationContext context,
                            @Qualifier("commandExecutor") ExecutorService commandExecutor) {
         this.information = information;
-        this.context = context;
         this.commandExecutor = commandExecutor;
     }
 
     @Override
     public void dispatch(Command command) throws CommandNotRegisteredError {
-            Class<? extends CommandHandler> handlerClass = information.search(command.getClass());
-            CommandHandler handler = context.getBean(handlerClass);
+        CommandHandler handler = information.search(command.getClass());
 
         commandExecutor.submit(() -> {
-            try {
-                // simulate heavy processing
-                Thread.sleep(5000);
-            } catch (InterruptedException ignored) {}
-
+            try { Thread.sleep(500); } catch (InterruptedException ignored) {}
             handler.handle(command);
         });
     }
