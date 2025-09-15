@@ -4,27 +4,27 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import restaurant.order.menu.domain.IngredientCreatedDomainEvent;
+import restaurant.order.menu.domain.PlateCreateDomainEvent;
 
 @Service
 public class PlateMetricsSubscriber {
 
-    private final Counter ingredientsCreated;
-    private final Counter ingredientsFailed; // optional, if you also emit failure events
+    private final Counter platesCreated;
+    private final Counter platesFailed; // optional, if you also emit failure events
 
     public PlateMetricsSubscriber(MeterRegistry registry) {
-        this.ingredientsCreated = Counter.builder("ingredients_created_total")
-                .description("Total number of successfully created ingredients")
+        this.platesCreated = Counter.builder("plates_created_total")
+                .description("Total number of successfully created plates")
                 .register(registry);
 
-        this.ingredientsFailed = Counter.builder("ingredients_failed_total")
-                .description("Total number of failed ingredient creations")
+        this.platesFailed = Counter.builder("plates_failed_total")
+                .description("Total number of failed plates")
                 .register(registry);
     }
 
     @EventListener
-    public void handleIngredientCreated(IngredientCreatedDomainEvent event) {
-        ingredientsCreated.increment();
+    public void handleIngredientCreated(PlateCreateDomainEvent event) {
+        platesCreated.increment();
         // optional: log or do other things with event.getName(), event.getQuantity()
     }
 
