@@ -1,4 +1,4 @@
-package restaurant.order.order.infrastructure.optimization;
+package restaurant.order.shared.Infrastructure.optimization;
 
 
 
