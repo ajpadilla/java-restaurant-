@@ -3,8 +3,8 @@
 # ==============================
 # Config
 # ==============================
-API_URL="http://192.168.100.101:8081/api/v1/plates"
-PLATE_ID="589e9977-454a-4900-80f4-28687de88906"
+API_URL="http://localhost:8081/api/v1/plates"
+PLATE_ID="868b5da4-b6c4-403d-bfb2-d6eba2e9e080"
 
 # ==============================
 # Call API

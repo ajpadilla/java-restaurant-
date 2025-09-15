@@ -3,7 +3,7 @@
 # ==============================
 # Config
 # ==============================
-API_URL="http://192.168.100.101:8081/api/v1/plates/index"
+API_URL="http://localhost:8081/api/v1/plates/index"
 PAGE=1
 SIZE=3
 

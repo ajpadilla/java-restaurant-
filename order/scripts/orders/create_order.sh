@@ -3,12 +3,12 @@
 # ==============================
 # Config
 # ==============================
-API_URL="http://192.168.100.101:8081/api/v1/orders/create"
+API_URL="http://localhost:8081/api/v1/orders/create"
 
 # Example plate IDs (replace with real ones)
 PLATE_IDS=(
-  "a3f6c75c-269d-4bfb-969c-7fdc0623d0a6"
-  "3c028982-50ed-4816-a209-e62721a6cabf"
+  "18192420-a682-4705-80fc-620d93d6b3b7"
+  "099ed1fb-9f37-474b-99a3-95899b3f9d05"
 )
 
 # Generate a UUID for the order

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-API_URL="http://192.168.100.101:8081/api/v1/plates/create"
+API_URL="http://localhost:8081/api/v1/plates/create"
 
 # Preloaded ingredients with full info
 # Format: "id|name|requiredQuantity"
@@ -21,14 +21,14 @@ for i in {1..5}; do
   done
   ingredients_json="${ingredients_json%,}]"  # Remove trailing comma and close array
 
-  # Send request and capture response + status
-  response=$(sudo ip netns exec clientns curl -s -w "HTTPSTATUS:%{http_code}" -X POST "$API_URL" \
-    -H "Content-Type: application/json" \
-    -d "{
-      \"id\": \"$plate_id\",
-      \"name\": \"$plate_name\",
-      \"ingredients\": $ingredients_json
-    }")
+ # Send request and capture response + status
+   response=$(curl -s -w "HTTPSTATUS:%{http_code}" -X POST "$API_URL" \
+     -H "Content-Type: application/json" \
+     -d "{
+       \"id\": \"$plate_id\",
+       \"name\": \"$plate_name\",
+       \"ingredients\": $ingredients_json
+     }")
 
   # Split response
   body=$(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')
