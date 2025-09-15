@@ -26,7 +26,6 @@ public class PostgreSqlConsumer {
     @PersistenceContext
     private final EntityManager entityManager;
     private final DomainEventsInformation domainEventsInformation;
-
     private final EventBus bus;
     private final Integer CHUNKS = 200;
 
@@ -43,7 +42,7 @@ public class PostgreSqlConsumer {
     /**
      * Scheduled polling: polls every 2 seconds (configurable)
      */
-    @Scheduled(fixedDelayString = "${events.polling.delay:200000}")
+    @Scheduled(fixedDelayString = "${events.polling.delay:2000}")
     @Transactional
     public void pollEvents() {
         consumeChunk();
@@ -66,10 +65,16 @@ public class PostgreSqlConsumer {
         for (Object[] row : events) {
             try {
                 DomainEvent domainEvent = buildDomainEvent(row);
+
+                if (domainEvent == null) {
+                    // Unknown event type → skip without crashing
+                    continue;
+                }
+
                 publishEventAsync(domainEvent);
                 markAsConsumed((String) row[0]);
             } catch (Exception e) {
-                e.printStackTrace(); // optional: add logging for failed events
+                e.printStackTrace(); // Replace with proper logging in production
             }
         }
 
@@ -82,9 +87,16 @@ public class PostgreSqlConsumer {
         String eventName = (String) row[2];
         String body = (String) row[3];
         String occurredOnStr = (String) row[4];
+
         Timestamp occurredOn = Timestamp.valueOf(occurredOnStr + " 00:00:00");
 
         Class<? extends DomainEvent> domainEventClass = domainEventsInformation.forName(eventName);
+
+        if (domainEventClass == null) {
+            System.err.println("⚠️ Unknown event type: " + eventName + " with id=" + id);
+            return null;
+        }
+
         DomainEvent nullInstance = domainEventClass.getConstructor().newInstance();
 
         return (DomainEvent) domainEventClass
