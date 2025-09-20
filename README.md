@@ -1,126 +1,133 @@
-# Proyecto: Sistema de Gestión de Restaurante
+# Restaurant Management System – Microservices Architecture
 
-## Tabla de Contenidos
+## Table of Contents
 
-- [Descripción](#descripción)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Requisitos Previos](#requisitos-previos)
-- [Configuración](#configuración)
-    - [Configuración de Order](#configuración-de-order)
-    - [Configuración de Kitchen](#configuración-de-kitchen)
+- [Project Overview](#overview)
+- [Architecture](#architecture)
+- [Core Components](#corecomponents)
+- [Prerequisites](#prerequisites)
+- [Setup & Configuration](#setup&configuration)
+    - [Order Service](#orderservice)
     - [Configuración de Store](#configuración-de-store)
 - [Uso](#uso)
-    - [Uso de Order](#uso-de-order)
-    - [Uso de Kitchen](#uso-de-kitchen)
-    - [Uso de Store](#uso-de-store)
-- [Pruebas](#pruebas)
-    - [Pruebas de Order](#pruebas-de-order)
-    - [Pruebas de Kitchen](#pruebas-de-kitchen)
-    - [Pruebas de Store](#pruebas-de-store)
-- [Dependencias](#dependencias)
-- [Licencia](#licencia)
+    - [Order Service](#order-service)
+    - [Kitchen Service](#kitchen-service)
+    - [Store Service](#store-service)
+- [Usage](#usage)
+    - [Order Service](#order-service)
+    - [Kitchen Service](#pruebas-de-kitchen)
+    - [Store Service](#pruebas-de-store)
+- [Dependencies](#dependencias)
+- [License](#licencia)
 
-# Microservices Architecture for Restaurant System
+# Project Overview
 
-Este proyecto implementa una arquitectura de microservicios utilizando Spring Boot y Netflix OSS, con múltiples servicios interconectados para gestionar el flujo de pedidos, cocina e inventarios en un sistema de restaurante. A continuación, se detallan los componentes clave y su función en el sistema.- **Order**: Gestión de pedidos.
+This project implements a microservices-based restaurant management system using Spring Boot and Netflix OSS. It manages orders, kitchen operations, and inventory in a scalable and decoupled way, using CQRS, Event-Driven Architecture, and Hexagonal Architecture principles to ensure flexibility and maintainability.
 
-## Arquitectura
+## Architecture
 
-La arquitectura del sistema está diseñada como un ecosistema de microservicios. A continuación, se describen los componentes principales que conforman este sistema:
+The system follows a microservices ecosystem pattern with independent services that communicate through APIs and event-driven messages. Each service encapsulates its domain logic and storage, promoting modularity, scalability, and resilience.
 
-### Componentes Principales
+### Core Components
 
 #### **1. Eureka Service (Discovery Server)**
-- **Rol:**  
-  Permite la descubribilidad de los microservicios en el ecosistema. Los servicios se registran aquí para ser localizados por otros servicios.
-- **Tecnologías:**  
-  Netflix Eureka.
+- **Role:**  
+  Enables service discovery for all microservices in the ecosystem.
+- **Technology:** Netflix Eureka.
 
 #### **2. Config Server**
-- **Rol:**  
-  Gestiona y centraliza la configuración de todos los microservicios. Facilita la configuración dinámica de las aplicaciones sin necesidad de reiniciar los servicios.
-- **Tecnologías:**  
-  Spring Cloud Config.
+- **Role:**  
+  Centralized configuration management for all microservices. Supports dynamic updates without service restarts.
+- **Technology:** Spring Cloud Config.
 
 #### **3. Config Client**
-- **Rol:**  
-  Clientes de configuración que obtienen sus configuraciones desde el Config Server.
-- **Tecnologías:**  
+- **Role:**  
+  Retrieves configuration data from the Config Server.
+- **Technology:**  
   Spring Cloud Config Client.
 
 #### **4. Actuator**
-- **Rol:**  
-  Proporciona métricas, información de salud, y otros endpoints para monitorizar y gestionar el estado de los microservicios.
-- **Tecnologías:**  
-  Spring Boot Actuator.
+- **Role:**  
+  Provides metrics, health checks, and monitoring endpoints for microservices.
+- **Technology:**  Spring Boot Actuator.
 
 #### **5. Gateway**
-- **Rol:**  
-  Punto de entrada único para las solicitudes HTTP. Se encarga de la autenticación, autorización y enrutamiento a los microservicios internos.
-- **Tecnologías:**  
+- **Role:**  
+  Single entry point for HTTP requests. Handles authentication, authorization, and routing to internal services.
+- **Technology:**  
   Spring Cloud Gateway, Spring WebFlux, Netflix OSS.
 
 #### **6. Order Service**
-- **Rol:**  
-  Gestiona el proceso de creación y seguimiento de pedidos.
-- **Tecnologías:**  
-  Spring Boot.
+- **Role:**  
+  Manages order creation, updates, and tracking.
+- **Technology:**  
+  Spring Boot, CQRS, Event-Driven, JPA/Hibernate.
 
 #### **7. Kitchen Service**
-- **Rol:**  
-  Se encarga de procesar los pedidos de cocina y actualizar el estado de los mismos.
-- **Tecnologías:**  
+- **Role:**  
+  Processes kitchen orders and updates their status.
+- **Technology:**  
   Spring Boot.
 
 #### **8. Store Service**
-- **Rol:**  
-  Gestiona los ingredientes e inventarios, y coordina con otros servicios para mantener el inventario actualizado.
-- **Tecnologías:**  
+- **Role:**  
+  Manages inventory and ingredients. Coordinates with other services to maintain up-to-date stock.
+- **Technology:**  
   Spring Boot.
 
 ---
 
-## Requisitos Previos
+## Prerequisites
 
 - Docker
 - Java 17
-- Node.js 18 (si aplica)
+- Node.js 18 (if applicable)
 - MongoDB Atlas
 
-## Configuración
+## Setup & Configuration
 
-Instrucciones específicas para configurar los servicios.
+Instructions to configure each microservice individually.
 
-## Uso
+## Order Service
 
-Cómo interactuar con los diferentes servicios.
+- **Instructions to configure each microservice individually**
+- **Connect to the database and configure environment variables.**
 
-## Pruebas
+## Store Service
 
-Cómo ejecutar pruebas unitarias e integraciones.
+- **Configure inventory database.**
+- **Ensure proper coordination with Kitchen and Order services.**
 
-## Dependencias
+# Usage
 
-Lista de dependencias clave utilizadas en el proyecto.
+## Order Service Usage
 
-## Licencia
+- **Create new orders, list orders, or fetch order details via REST API or events.**
 
-Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` para más detalles.
-## Estructura del Proyecto
+## Kitchen Service Usage
 
-```plaintext
-Proyecto/
-├── order/
-│   ├── src/
-│   ├── README.md
-│   └── ...
-├── kitchen/
-│   ├── src/
-│   ├── README.md
-│   └── ...
-├── store/
-│   ├── src/
-│   ├── README.md
-│   └── ...
-└── README.md
+- **Receive orders, update preparation status, and notify Order service when complete..**
 
+## Store Service Usage
+
+- **Manage inventory, track ingredients, and update stock levels.**
+
+
+## Testing
+
+- **Each service includes unit and integration tests.**
+- **Run tests with Maven: mvn test**
+- **Or use Docker Compose to test the entire ecosystem.**
+
+## Dependencies
+
+- **Spring Boot.**
+- **Spring Cloud Netflix OSS (Eureka, Gateway)**
+- **Spring Cloud Config**
+- **JPA / Hibernate**
+- **Kafka / PostgreSQL for event-driven messaging**
+- **Docker**
+
+## License
+
+This project is licensed under the MIT License – see the LICENSE file for details.
