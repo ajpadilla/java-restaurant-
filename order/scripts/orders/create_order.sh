@@ -7,8 +7,8 @@ API_URL="http://localhost:8081/api/v1/orders/create"
 
 # Example plate IDs (replace with real ones)
 PLATE_IDS=(
-  "18192420-a682-4705-80fc-620d93d6b3b7"
-  "099ed1fb-9f37-474b-99a3-95899b3f9d05"
+  "8062e671-3106-4930-bf03-660829fd78a2"
+  "1222a517-df18-4237-ae32-84ad782fe796"
 )
 
 # Generate a UUID for the order

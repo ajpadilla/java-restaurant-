@@ -4,7 +4,7 @@
 # Config
 # ==============================
 API_URL="http://localhost:8081/api/v1/plates"
-PLATE_ID="868b5da4-b6c4-403d-bfb2-d6eba2e9e080"
+PLATE_ID="6904a4e3-781c-4620-8858-eaca42aecab6"
 
 # ==============================
 # Call API

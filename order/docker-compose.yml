@@ -16,7 +16,7 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_REDIS_HOST: redis
     networks:
-      - backend
+      - restaurant_shared_network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -24,7 +24,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     networks:
-      - backend
+      - restaurant_shared_network
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
@@ -41,7 +41,7 @@ services:
     depends_on:
       - zookeeper
     networks:
-      - backend
+      - restaurant_shared_network
 
   postgres:
     image: postgres:14
@@ -56,7 +56,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - backend
+      - restaurant_shared_network
 
   redis:
     image: redis:7
@@ -64,11 +64,11 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - backend
+      - restaurant_shared_network
 
 networks:
-  backend:
-    driver: bridge
+  restaurant_shared_network:
+    external: true
 
 volumes:
   postgres_data:

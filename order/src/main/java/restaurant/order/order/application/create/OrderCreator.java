@@ -3,6 +3,7 @@ package restaurant.order.order.application.create;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import restaurant.order.kafka.KafkaOrderJsonService;
+import restaurant.order.order.domain.CastOrderToJsonService;
 import restaurant.order.order.domain.Order;
 import restaurant.order.order.domain.OrderId;
 import restaurant.order.order.domain.OrderRepository;
@@ -38,7 +39,7 @@ public class OrderCreator {
                 .toList();
 
         Order order = Order.create(id, plates);
-      //  this.orderJsonService.send(new CastOrderToJsonService(order).createMap());
+        this.orderJsonService.send(new CastOrderToJsonService(order).createMap());
         this.repository.save(order);
         this.eventBus.publish(order.pullDomainEvents());
     }

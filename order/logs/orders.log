@@ -1,0 +1,2 @@
+Error occurred during initialization of VM
+Could not find Agent_OnLoad function in the agent library: /home/alvaro/perf-map-agent/perf-map-agent/out/libperfmap.so
