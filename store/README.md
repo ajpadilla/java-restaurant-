@@ -1,81 +1,57 @@
-# Store Service
+Perfect, now that I see your **Store service**, we can summarize it clearly for your `README.md`. Here's a concise, readable version that highlights your **event-driven, inventory/reservation logic** without going too deep into implementation:
 
-Este servicio es parte de un sistema de microservicios diseñado para gestionar la disponibilidad y reservas de ingredientes, así como la creación y seguimiento de pedidos en un restaurante. El servicio se comunica con otros microservicios a través de Kafka y sigue un enfoque basado en eventos para la interacción entre los componentes del sistema.
+---
 
-## Estructura del Proyecto
+## Store Service (Warehouse / Inventory)
 
-La arquitectura del proyecto está basada en microservicios con una clara separación de responsabilidades. A continuación se describe cada uno de los componentes principales:
+The **Store Service** manages ingredient availability, reservations, and purchases for the restaurant system. It ensures that orders can be fulfilled reliably using event-driven communication with the Kitchen Service.
 
-### 1. `config/`
+### Key Features
 
-Contiene las configuraciones relacionadas con Kafka.
+1. **Ingredient Availability Checks**
 
-- **KafkaConsumerConfig.java**: Configuración general de los consumidores de Kafka.
-- **KafkaTopicConfig.java**: Configuración de los tópicos utilizados en Kafka.
+   * Listens to `ingredientAvailabilityRequestTopic`.
+   * Checks inventory for requested ingredients.
+   * Temporarily reserves available ingredients for orders.
 
-### 2. `consumer/`
+2. **Reservation Management**
 
-Aquí se encuentran los consumidores de eventos que reciben y procesan los mensajes de Kafka.
+   * Tracks temporary ingredient reservations in memory.
+   * Confirms reservations and decrements inventory on `orderCompletedTopic`.
+   * Cancels reservations if an order expires (`orderExpiredTopic`).
 
-- **events/**: Contiene las clases de eventos que representan las distintas notificaciones en el sistema, como `IngredientAvailabilityRequest`, `OrderCompletedEvent`, etc.
-- **KafkaConsumer.java**: Consumidor base que maneja los eventos de Kafka.
-- **PurchaseOrderConsumer.java** y **StoreOrderConsumer.java**: Consumidores específicos para manejar eventos relacionados con la compra y el pedido de ingredientes.
-- **Student.java**: Clase de ejemplo (probablemente ya no se usa, a considerar eliminar si no es necesaria).
+3. **Handling Shortages**
 
-### 3. `ingredients/`
+   * Listens to `ingredientShortageTopic` for unavailable ingredients.
+   * Uses `IngredientPurchaseService` to request purchases from suppliers.
+   * Re-publishes availability requests once new stock arrives.
 
-Maneja la lógica relacionada con los ingredientes del restaurante.
+4. **Order Processing**
 
-- **application/**: Contiene servicios de aplicación, como `AvailabilityIngredientService.java`, que gestiona la disponibilidad de los ingredientes.
-- **domain/**: Define los modelos del dominio, como `Ingredient.java`, `IngredientId.java`, `IngredientQuantity.java`, y excepciones relacionadas como `IngredientNotFoundException.java`.
-- **infrastructure/**: Implementación de la infraestructura, incluyendo la integración con APIs externas (`IngredientPurchaseService.java`) y la persistencia de datos mediante `JpaIngredientRepository.java`.
+   * `AvailabilityIngredientService` processes order requests.
+   * Validates ingredient quantities.
+   * Retries ingredient purchases if stock is insufficient.
+   * Returns a detailed map of processed plates and ingredients for Kitchen Service.
 
-### 4. `order/`
+### Event Flow (Simplified)
 
-Encargado de la gestión de pedidos.
+```
+KitchenService ---> ingredientAvailabilityRequestTopic ---> StoreService
+StoreService ---> ingredientReservedTopic ---> KitchenService
+StoreService ---> ingredientShortageTopic ---> PurchaseOrderConsumer ---> ingredientAvailabilityRequestTopic
+KitchenService ---> orderCompletedTopic ---> StoreService (confirm inventory)
+KitchenService ---> orderExpiredTopic ---> StoreService (cancel reservation)
+```
 
-- **infrastructure/**: Contiene la infraestructura del servicio de pedidos, como el `OrderController.java` y los objetos de solicitud relacionados, como `CreateOrderRequest.java` y `IngredientRequest.java`.
+### Notes / Improvements
 
-### 5. `purchases/`
+* Implements **optimistic locking / transactional updates** for inventory consistency.
+* Handles **temporary reservations** to prevent overbooking.
+* Supports **automatic purchase requests** on shortages.
+* Uses **Kafka for asynchronous communication**, enabling reliable and decoupled workflows.
 
-Maneja la lógica de compras y pedidos de ingredientes.
+---
 
-- **domain/**: Define los modelos relacionados con las compras, como `Purchase.java` y `PurchaseId.java`.
-- **infrastructure/**: Implementa la infraestructura de persistencia con la clase `JpaPurchaseRepository.java`.
+If you want, I can **also merge the Kitchen + Store service flows into a single visual diagram** for your README so anyone can understand the full end-to-end order lifecycle at a glance.
 
-### 6. `shared/`
-
-Contiene clases comunes y utilitarias que pueden ser utilizadas en todo el proyecto.
-
-- **domain/**: Incluye la clase `AggregateRoot.java`, que se utiliza para representar los agregados del dominio, y otras clases comunes como `Identifier.java`, `IntValueObject.java`, y `StringValueObject.java`.
-- **infrastructure/**: Contiene implementaciones del bus de eventos (`bus/event`).
-- **Utils.java**: Métodos utilitarios que ayudan en varias partes del sistema.
-
-### 7. `StoreApplication.java`
-
-Es la clase principal que arranca la aplicación Spring Boot y configura todos los componentes necesarios.
-
-## Flujo de Trabajo
-
-1. **Creación de Pedido**: El servicio puede recibir solicitudes de creación de pedidos mediante el `OrderController`. Estos pedidos incluyen detalles como los ingredientes y platos solicitados.
-2. **Gestión de Ingredientes**: El servicio interactúa con la API de ingredientes para verificar la disponibilidad y realizar reservas, actualizando el estado de los ingredientes en tiempo real.
-3. **Eventos**: El servicio está basado en eventos. Los eventos de Kafka, como `IngredientAvailabilityRequest` o `OrderCompletedEvent`, se utilizan para comunicar el estado del sistema y coordinar el flujo entre diferentes microservicios.
-4. **Persistencia**: Los datos del servicio, como los pedidos y las compras, se persisten en bases de datos mediante repositorios JPA.
-
-## Dependencias Externas
-
-- **Kafka**: Para la comunicación entre microservicios mediante eventos.
-- **Redis**: Utilizado para el manejo de sesiones o almacenamiento temporal.
-- **JPA**: Para la persistencia de datos.
-
-## Configuración
-
-Puedes configurar el servicio mediante el archivo `application.yml` en el directorio `resources`. Allí se definen los parámetros relacionados con la conexión a Kafka, la base de datos y otros aspectos del sistema.
-
-## Cómo Ejecutar el Proyecto
-
-1. Asegúrate de tener Java 11 o superior instalado.
-2. Clona este repositorio:
-   ```bash
-   git clone <URL_DEL_REPOSITORIO>
-   cd <nombre_del_directorio>
+Do you want me to do that?
